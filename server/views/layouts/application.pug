@@ -15,17 +15,7 @@ html(lang="ru")
           ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
             li.nav-item
               a.nav-link.px-2.text-white(href=route('users'))= t('layouts.application.users')
-            //- li
-            //-   a.nav-link.px-2.text-white(href="#") Features
-            //- li
-            //-   a.nav-link.px-2.text-white(href="#") Pricing
-            //- li
-            //-   a.nav-link.px-2.text-white(href="#") FAQs
-            //- li
-            //-   a.nav-link.px-2.text-white(href="#") About
           .text-end
-            //- a.btn.btn-outline-light.me-2(href=route('newSession') type="button")= t('layouts.application.signIn')
-            //- a.btn.btn-warning(href=route('newUser') type="button")= t('layouts.application.signUp')
           if isAuthenticated()
             +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
           else
