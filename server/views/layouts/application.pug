@@ -3,30 +3,36 @@ include ../mixins/forms.pug
 doctype html
 html(lang="ru")
   head
-    title Hexlet Fastify Boilerplate
+    title Hexlet Task Manager
     script(src=assetPath('main.js'))
     link(href=assetPath('main.css') rel="stylesheet")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
   body.d-flex.flex-column.min-vh-100
-    nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
-      .container-fluid
-        a.navbar-brand(href=route('root'))= t('appName')
-        button.navbar-toggler(data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent")
-          span.navbar-toggler-icon
-        .collapse.navbar-collapse(id="navbarToggleExternalContent")
-          .container-fluid
-            ul.navbar-nav.mr-auto
-              li.nav-item
-                a.nav-link(href=route('users'))= t('layouts.application.users')
-          ul.navbar-nav
-            if isAuthenticated()
-              li.nav-item
-                +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
-            else
-              li.nav-item
-                a.nav-link(href=route('newSession'))= t('layouts.application.signIn')
-              li.nav-item
-                a.nav-link(href=route('newUser'))= t('layouts.application.signUp')
+    header.p-3.bg-dark.text-white
+      .container
+        .d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
+          a.d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none(href="/")
+            svg.bi.me-2(width="40" height="32" role="img" aria-label="Bootstrap")
+            use(xlink:href="#bootstrap")
+          ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
+            li.nav-item
+              a.nav-link.px-2.text-white(href=route('users'))= t('layouts.application.users')
+            //- li
+            //-   a.nav-link.px-2.text-white(href="#") Features
+            //- li
+            //-   a.nav-link.px-2.text-white(href="#") Pricing
+            //- li
+            //-   a.nav-link.px-2.text-white(href="#") FAQs
+            //- li
+            //-   a.nav-link.px-2.text-white(href="#") About
+          .text-end
+            //- a.btn.btn-outline-light.me-2(href=route('newSession') type="button")= t('layouts.application.signIn')
+            //- a.btn.btn-warning(href=route('newUser') type="button")= t('layouts.application.signUp')
+          if isAuthenticated()
+            +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
+          else
+            a.btn.btn-outline-light.me-2(href=route('newSession') type="button")= t('layouts.application.signIn')
+            a.btn.btn-warning(href=route('newUser') type="button")= t('layouts.application.signUp')
     .container.wrapper.flex-grow-1
 
       each messages, type in reply.flash() || []
