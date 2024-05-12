@@ -26,5 +26,3 @@ lint:
 
 test:
 	npm test -s
-
-render-setup: install db-migrate build
