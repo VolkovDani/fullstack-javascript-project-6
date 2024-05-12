@@ -44,6 +44,6 @@ jobs:
         with:
           context: .
           push: true
-          cache-from: hexletcomponents/fastify-nodejs-application:latest
+          cache-from: volkovdani/fullstack-javascript-project-6:latest
           cache-to: type=inline
-          tags: hexletcomponents/fastify-nodejs-application:latest
+          tags: volkovdani/fullstack-javascript-project-6:latest
