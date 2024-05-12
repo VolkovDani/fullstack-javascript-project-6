@@ -29,6 +29,14 @@ export default {
         signOut: 'Выход',
       },
     },
+    mixins: {
+      forms: {
+        firstName: 'Имя',
+        lastName: 'Фамилия',
+        email: 'Email',
+        password: 'Пароль',
+      },
+    },
     views: {
       session: {
         new: {

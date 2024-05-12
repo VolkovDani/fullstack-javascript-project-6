@@ -12,7 +12,7 @@ mixin input(entity, propertyName, errors = {})
   .mb-3(class=(errors[propertyName] && 'has-danger'))
     label(
       for= inputId
-    )= propertyName
+    )= t(`mixins.forms.${propertyName}`)
     input(
       id= inputId
       name=getInputName(propertyName)
