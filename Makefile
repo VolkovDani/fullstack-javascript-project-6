@@ -27,5 +27,4 @@ lint:
 test:
 	npm test -s
 
-setup-render:
-	setup build
+setup-render: setup build
