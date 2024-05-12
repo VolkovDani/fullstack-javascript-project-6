@@ -11,10 +11,7 @@ html(lang="ru")
     header.p-3.bg-dark.text-white
       .container
         .d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
-          a.navbar-brand(href=route('root'))= t('appName')
-          a.d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none(href="/")
-            svg.bi.me-2(width="40" height="32" role="img" aria-label="Bootstrap")
-            use(xlink:href="#bootstrap")
+          a.navbar-brand.border.border-warning.rounded.p-2(href=route('root'))= t('appName')
           ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
             li.nav-item
               a.nav-link.px-2.text-white(href=route('users'))= t('layouts.application.users')
