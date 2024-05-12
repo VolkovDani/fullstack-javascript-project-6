@@ -50,6 +50,10 @@ export default {
         email: 'Email',
         createdAt: 'Дата создания',
         actions: 'Действия',
+        actionButtons: {
+          edit: 'Изменить',
+          delete: 'Удалить',
+        },
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',

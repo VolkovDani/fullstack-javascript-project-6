@@ -16,4 +16,7 @@ block content
           td!= `${user.firstName} ${user.lastName}`
           td= user.email
           td= formatDate(user.createdAt)
-          td Something
+          td
+            .d-flex.flex-wrap
+              a(href=route('users') class="btn btn-warning me-1" type="button")= t('views.users.actionButtons.edit')
+              +buttonTo(route('session'), 'delete')(class="btn btn-danger" value=t('views.users.actionButtons.delete'))
