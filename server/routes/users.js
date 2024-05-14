@@ -1,6 +1,6 @@
 // @ts-check
 
-import i18next from 'i18next';
+import i18next, { use } from 'i18next';
 
 export default (app) => {
   app
@@ -12,6 +12,14 @@ export default (app) => {
     .get('/users/new', { name: 'newUser' }, (req, reply) => {
       const user = new app.objection.models.user();
       reply.render('users/new', { user });
+    })
+    .get('/users/:id/edit', { name: 'editUser' }, async (req, reply) => {
+      const userId = req.params.id;
+      const user = await app.objection.models.user
+        .query()
+        .findOne({ id: userId });
+      console.log(user);
+      reply.render('users/edit', { user });
     })
     .post('/users', async (req, reply) => {
       const user = new app.objection.models.user();

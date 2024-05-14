@@ -51,6 +51,15 @@ describe('test users CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it('edit', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('editUser', { id: 1 }),
+    });
+
+    expect(response.statusCode).toBe(200);
+  });
+
   it('create', async () => {
     const params = testData.users.new;
     const response = await app.inject({
