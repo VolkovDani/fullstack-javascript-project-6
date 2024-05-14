@@ -1,0 +1,15 @@
+extends ../layouts/application.pug
+
+block content
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.users.id')
+        th= t('views.users.fullName')
+        th= t('views.users.email')
+        th= t('views.users.createdAt')
+        th= t('views.users.actions')
+    tbody
+      tr
+        each param in user
+          th param

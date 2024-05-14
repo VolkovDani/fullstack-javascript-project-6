@@ -20,6 +20,7 @@ export default (app) => {
         .findOne({ id: userId });
       console.log(user);
       reply.render('users/edit', { user });
+      return reply;
     })
     .post('/users', async (req, reply) => {
       const user = new app.objection.models.user();

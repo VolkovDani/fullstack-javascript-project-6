@@ -10,6 +10,9 @@ export default (app) => ({
   t(key) {
     return i18next.t(key);
   },
+  routeTo(name, params) {
+    return app.reverse(name, params);
+  },
   _,
   getAlertClass(type) {
     switch (type) {
