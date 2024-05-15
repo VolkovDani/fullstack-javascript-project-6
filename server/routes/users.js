@@ -13,13 +13,18 @@ export default (app) => {
       const user = new app.objection.models.user();
       reply.render('users/new', { user });
     })
-    .get('/users/:id/edit', { name: 'editUser' }, async (req, reply) => {
+    .get('/users/:id/edit', { name: 'editUser', preValidation: app.authenticate }, async (req, reply) => {
       const userId = req.params.id;
       const user = await app.objection.models.user
         .query()
         .findOne({ id: userId });
-      console.log(user);
-      reply.render('users/edit', { user });
+
+      if (Number(req.session.get('passport').id) === Number(userId)) {
+        reply.render('users/edit', { user });
+      } else {
+        req.flash('error', i18next.t('flash.users.editPage.error'));
+        reply.redirect(app.reverse('users'));
+      }
       return reply;
     })
     .post('/users', async (req, reply) => {
@@ -37,5 +42,9 @@ export default (app) => {
       }
 
       return reply;
+    })
+    .patch('/users/:id', async (req, reply) => {
+      const userId = req.params.id;
+      req.flash('info', userId);
     });
 };
