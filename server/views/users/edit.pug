@@ -1,15 +1,12 @@
 extends ../layouts/application.pug
 
+block header
+  = t('views.users.edit')
+
 block content
-  table.table.table-striped
-    thead
-      tr
-        th= t('views.users.id')
-        th= t('views.users.fullName')
-        th= t('views.users.email')
-        th= t('views.users.createdAt')
-        th= t('views.users.actions')
-    tbody
-      tr
-        each param in user
-          th param
+  +formFor()(action=route('users') method='patch')
+    +input(user, 'firstName', errors)(type="text" value=user.firstName)
+    +input(user, 'lastName', errors)(type="text" value=user.lastName)
+    +input(user, 'email', errors)(type="text" value=user.email)
+    +input(user, 'password', errors)(type="password")
+    +submit(user)(value=t('views.users.new.submit'))
