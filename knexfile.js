@@ -27,10 +27,9 @@ export const test = {
 };
 
 export const production = {
-  client: 'sqlite3',
-  connection: {
-    filename: path.resolve(__dirname, 'database.sqlite'),
-  },
+  client: 'pg',
+  connection: process.env.PG_CONNECTION_STRING,
   useNullAsDefault: true,
+  debug: true,
   migrations,
 };
