@@ -26,20 +26,20 @@ export const test = {
   migrations,
 };
 
-export const production = {
-  client: 'sqlite3',
-  connection: {
-    filename: path.resolve(__dirname, 'database.sqlite'),
-  },
-  useNullAsDefault: true,
-  migrations,
-};
-
 // export const production = {
-//   client: 'pg',
-//   connection: process.env.PG_CONNECTION_STRING,
+//   client: 'sqlite3',
+//   connection: {
+//     filename: path.resolve(__dirname, 'database.sqlite'),
+//   },
 //   useNullAsDefault: true,
-//   debug: true,
-//   ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false,
 //   migrations,
 // };
+
+export const production = {
+  client: 'pg',
+  connection: process.env.PG_CONNECTION_STRING,
+  useNullAsDefault: true,
+  debug: true,
+  ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false,
+  migrations,
+};
