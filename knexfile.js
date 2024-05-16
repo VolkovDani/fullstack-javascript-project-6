@@ -37,9 +37,16 @@ export const test = {
 
 export const production = {
   client: 'pg',
-  connection: process.env.PG_CONNECTION_STRING,
+  connection: {
+    connectionString: process.env.PG_CONNECTION_STRING,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+  },
   useNullAsDefault: true,
   debug: true,
-  ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false,
+  ssl: false,
   migrations,
 };
