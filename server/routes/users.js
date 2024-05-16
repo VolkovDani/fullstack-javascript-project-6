@@ -14,7 +14,6 @@ export default (app) => {
       reply.render('users/new', { user });
     })
     .get('/users/:id/edit', { name: 'editUser', preValidation: app.authenticate }, async (req, reply) => {
-
       const userId = req.params.id;
       const user = await app.objection.models.user
         .query()
