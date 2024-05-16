@@ -42,9 +42,9 @@ export default (app) => {
       }
 
       return reply;
-    })
-    .patch('/users/:id', async (req, reply) => {
-      const userId = req.params.id;
-      req.flash('info', userId);
     });
+  // .patch('/users/:id', async (req, reply) => {
+  //   const userId = req.params.id;
+  //   req.flash('info', userId);
+  // });
 };
