@@ -4,9 +4,10 @@ block header
   = t('views.users.edit')
 
 block content
-  +formFor()(action=route('users') method='patch')
+  +formFor()(action=routeTo('patchUser', { id: user.id }) method='post')
     +input(user, 'firstName', errors)(type="text" value=user.firstName)
     +input(user, 'lastName', errors)(type="text" value=user.lastName)
     +input(user, 'email', errors)(type="text" value=user.email)
     +input(user, 'password', errors)(type="password")
+    input(name="_method" value='patch' type='hidden')
     +submit(user)(value=t('views.users.new.submit'))

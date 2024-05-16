@@ -42,9 +42,12 @@ export default (app) => {
       }
 
       return reply;
+    })
+    .patch('/users/:id', { name: 'patchUser', preValidation: app.authenticate }, async (req, reply) => {
+      console.log(' -------------------------------------------------------- ');
+      const userId = req.params.id;
+      console.log(userId);
+      req.flash('info', i18next.t('users.patch.success'));
+      reply.redirect(app.reverse('users'));
     });
-  // .patch('/users/:id', async (req, reply) => {
-  //   const userId = req.params.id;
-  //   req.flash('info', userId);
-  // });
 };
