@@ -1,6 +1,6 @@
 // @ts-check
 
-import i18next, { use } from 'i18next';
+import i18next from 'i18next';
 
 export default (app) => {
   app
