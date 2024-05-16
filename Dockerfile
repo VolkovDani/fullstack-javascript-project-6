@@ -1,4 +1,5 @@
 FROM node:18-slim
+LABEL org.opencontainers.image.source=https://github.com/VolkovDani/fullstack-javascript-project-6
 
 RUN apt-get update && apt-get install -yq \
   build-essential \
