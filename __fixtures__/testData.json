@@ -11,6 +11,16 @@
       "password": "O6AvLIQL1cbzrre",
       "firstName": "Carmen",
       "lastName": "Larkin"
-      }
+      },
+    "patched": {
+      "email": "elbert_abshire52@gmail.com",
+      "passwordDigest": "5f9b60f2fdeefeb82add76f9acfe629e2844987d245c9f07005dda1e1316c3f6",
+      "firstName": "Costa",
+      "lastName": "Wint"
+    },
+    "patch": {
+      "firstName": "Costa",
+      "lastName": "Wint"
+    }
   }
 }

@@ -5,7 +5,7 @@ import fastify from 'fastify';
 
 import init from '../server/plugin.js';
 import encrypt from '../server/lib/secure.cjs';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getSessionCookieFromResponse, getTestData, prepareData } from './helpers/index.js';
 
 describe('test users CRUD', () => {
   let app;
@@ -52,12 +52,29 @@ describe('test users CRUD', () => {
   });
 
   it('edit', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: app.reverse('editUser', { id: 1 }),
+    const responseSignIn = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.existing,
+      },
     });
 
-    expect(response.statusCode).toBe(200);
+    const wrongResponse = await app.inject({
+      method: 'GET',
+      url: app.reverse('editUser', { id: 1 }),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+    });
+
+    expect(wrongResponse.statusCode).toBe(302);
+
+    const correctResponse = await app.inject({
+      method: 'GET',
+      url: app.reverse('editUser', { id: 2 }),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+    });
+
+    expect(correctResponse.statusCode).toBe(200);
   });
 
   it('create', async () => {

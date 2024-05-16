@@ -18,3 +18,11 @@ export const prepareData = async (app) => {
   // получаем данные из фикстур и заполняем БД
   await knex('users').insert(getFixtureData('users.json'));
 };
+
+// получаем сессионные куки из ответа
+export const getSessionCookieFromResponse = (response) => {
+  const [sessionCookie] = response.cookies;
+  const { name, value } = sessionCookie;
+  const cookies = { [name]: value };
+  return cookies;
+};
