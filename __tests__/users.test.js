@@ -96,6 +96,48 @@ describe('test users CRUD', () => {
     expect(user).toMatchObject(expected);
   });
 
+  it('patch', async () => {
+    const userData = testData.users.existing;
+    const patchedUser = testData.users.patched;
+    const user = await models.user.query().findOne({ id: 2 });
+
+    const responseSignIn = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: userData,
+      },
+    });
+
+    const { UserNames } = testData.patches;
+    // Запрос с указанием только имени и фамилии
+    const wrondResponse = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('patchUser', { id: Number(userData.id) }),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+      payload: {
+        data: UserNames,
+      },
+    });
+    expect(wrondResponse.statusCode).toBe(422);
+    expect(user).not.toMatchObject(patchedUser);
+
+    const { correctPatchData } = testData.patches;
+    const correctResponse = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('patchUser', { id: Number(userData.id) }),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+      payload: {
+        data: correctPatchData,
+      },
+    });
+
+    const updatedUser = await models.user.query().findOne({ id: 2 });
+
+    expect(updatedUser).toMatchObject(patchedUser);
+    expect(correctResponse.statusCode).toBe(302);
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

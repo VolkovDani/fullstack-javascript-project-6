@@ -7,20 +7,29 @@
       "lastName": "Pouros"
     },
     "existing": {
+      "id": 2,
       "email": "lawrence.kulas87@outlook.com",
       "password": "O6AvLIQL1cbzrre",
       "firstName": "Carmen",
       "lastName": "Larkin"
       },
     "patched": {
-      "email": "elbert_abshire52@gmail.com",
-      "passwordDigest": "5f9b60f2fdeefeb82add76f9acfe629e2844987d245c9f07005dda1e1316c3f6",
-      "firstName": "Costa",
-      "lastName": "Wint"
+      "email": "lawrence.kulas87@outlook.com",
+      "passwordDigest": "87c6374c24969f2af49433baa6d8b96e2bdb17a509b79049d2edb4fde98e4c46",
+      "firstName": "Carmenia",
+      "lastName": "Larking"
+    }
+  },
+  "patches": {
+    "UserNames": {
+      "firstName": "Carmenia",
+      "lastName": "Larking"
     },
-    "patch": {
-      "firstName": "Costa",
-      "lastName": "Wint"
+    "correctPatchData": {
+      "email": "lawrence.kulas87@outlook.com",
+      "password": "O6AvLIQL1cbzrre",
+      "firstName": "Carmenia",
+      "lastName": "Larking"
     }
   }
 }

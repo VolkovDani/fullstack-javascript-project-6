@@ -19,7 +19,7 @@ export default (app) => {
         .query()
         .findOne({ id: userId });
 
-      if (Number(req.session.get('passport').id) === Number(userId)) {
+      if (req.session.get('passport').id === Number(userId)) {
         reply.render('users/edit', { user });
       } else {
         req.flash('error', i18next.t('flash.users.editPage.error'));
@@ -44,10 +44,28 @@ export default (app) => {
       return reply;
     })
     .patch('/users/:id', { name: 'patchUser', preValidation: app.authenticate }, async (req, reply) => {
-      console.log(' -------------------------------------------------------- ');
       const userId = req.params.id;
-      console.log(userId);
-      req.flash('info', i18next.t('users.patch.success'));
-      reply.redirect(app.reverse('users'));
+      if (req.session.get('passport').id !== Number(userId)) {
+        req.flash('error', i18next.t('flash.users.patch.errorAccess'));
+        reply.redirect(app.reverse('users'));
+      }
+      const { password, ...neededRest } = req.body.data;
+      try {
+        await app.objection.models.user.fromJson(req.body.data);
+        const patchedUser = await app.objection.models.user
+          .query()
+          .findOne({ id: userId });
+        await patchedUser.$query().patch(req.body.data);
+        req.flash('info', i18next.t('flash.users.patch.success'));
+        reply.redirect(app.reverse('users'));
+      } catch ({ data }) {
+        reply.statusCode = 422;
+        // Создаю юзера чтобы передать его обратно в форму в случае ошибок в форме
+        const user = new app.objection.models.user();
+        user.$set({ id: userId, ...neededRest });
+        req.flash('error', i18next.t('flash.users.patch.error'));
+        reply.render('users/edit', { id: userId, user, errors: data });
+      }
+      return reply;
     });
 };
