@@ -17,7 +17,7 @@ export default (app) => {
       const userId = req.params.id;
       const user = await app.objection.models.user
         .query()
-        .findOne({ id: userId });
+        .findById(userId);
 
       if (req.session.get('passport').id === Number(userId)) {
         reply.render('users/edit', { user });
@@ -54,8 +54,10 @@ export default (app) => {
         await app.objection.models.user.fromJson(req.body.data);
         const patchedUser = await app.objection.models.user
           .query()
-          .findOne({ id: userId });
+          .findById(userId);
+
         await patchedUser.$query().patch(req.body.data);
+
         req.flash('info', i18next.t('flash.users.patch.success'));
         reply.redirect(app.reverse('users'));
       } catch ({ data }) {
