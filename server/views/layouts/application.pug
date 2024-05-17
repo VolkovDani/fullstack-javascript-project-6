@@ -1,4 +1,5 @@
 include ../mixins/forms.pug
+include ../mixins/headerButtons.pug
 
 doctype html
 html(lang="ru")
@@ -8,16 +9,17 @@ html(lang="ru")
     link(href=assetPath('main.css') rel="stylesheet")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
   body.d-flex.flex-column.min-vh-100
-    header.p-3.bg-dark.text-white
+    nav.text-white.navbar.navbar-expand-lg.navbar-dark.bg-black
       .container
-        .d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
-          a.navbar-brand.border.border-warning.rounded.p-2(href=route('root'))= t('appName')
-          ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
-            li.nav-item
-              a.nav-link.px-2.text-white(href=route('users'))= t('layouts.application.users')
-          .text-end
+        a.navbar-brand.border.border-warning.rounded.p-2(href=route('root'))= t('appName')
+        button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse#navbarSupportedContent
+          ul.navbar-nav.col-lg-auto.d-flex.flex-wrap.me-auto
+            +linkButton('users')
+            +linkButton('users')
           if isAuthenticated()
-            +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
+            +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
           else
             a.btn.btn-outline-light.me-2(href=route('newSession') type="button")= t('layouts.application.signIn')
             a.btn.btn-warning(href=route('newUser') type="button")= t('layouts.application.signUp')

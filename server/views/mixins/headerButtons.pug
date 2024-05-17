@@ -1,0 +1,3 @@
+mixin linkButton(name = 'noName')
+  li.nav-item&attributes(attributes)
+    a.nav-link.px-2.text-white(href=route(name))!= t(`layouts.application.${name}`)
