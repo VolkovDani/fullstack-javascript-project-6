@@ -69,5 +69,25 @@ export default (app) => {
         reply.render('users/edit', { id: userId, user, errors: data });
       }
       return reply;
+    })
+    .delete('/users/:id', { name: 'deleteUser', preValidation: app.authenticate }, async (req, reply) => {
+      const userId = req.params.id;
+      if (req.session.get('passport').id !== Number(userId)) {
+        req.flash('error', i18next.t('flash.users.delete.errorAccess'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      }
+      try {
+        await app.objection.models.user
+          .query()
+          .findOne({ id: userId })
+          .delete();
+        // выходим из сессии чтобы не создавать ошибку
+        req.logOut();
+        req.flash('info', i18next.t('flash.users.delete.success'));
+        reply.redirect(app.reverse('users'));
+      } catch ({ data }) {
+        req.flash('error', i18next.t('flash.users.delete.error'));
+      }
     });
 };

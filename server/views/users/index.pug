@@ -19,4 +19,4 @@ block content
           td
             .d-flex.flex-wrap
               a(href=routeTo('editUser', { id: user.id }) class="btn btn-warning me-1" type="button")= t('views.users.actionButtons.edit')
-              +buttonTo(route('session'), 'delete')(class="btn btn-danger" value=t('views.users.actionButtons.delete'))
+              +buttonTo(routeTo('deleteUser', { id: user.id }), 'delete')(class="btn btn-danger" value=t('views.users.actionButtons.delete'))

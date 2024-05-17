@@ -138,6 +138,32 @@ describe('test users CRUD', () => {
     expect(correctResponse.statusCode).toBe(302);
   });
 
+  it('delete', async () => {
+    const userData = testData.users.existing;
+    // заходим за него в систему
+    const responseSignIn = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.existing,
+      },
+    });
+
+    expect(responseSignIn.statusCode).toBe(302);
+
+    // удаляем пользователя
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id: Number(userData.id) }),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+    });
+
+    await expect(models.user
+      .query()
+      .findOne({ id: 2 })
+      .throwIfNotFound()).rejects.toThrowError('NotFoundError');
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции
