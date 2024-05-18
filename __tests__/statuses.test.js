@@ -65,16 +65,22 @@ describe('test statuses CRUD', () => {
       },
     });
 
+    const { newStatus } = testData.statuses;
+
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('statuses'),
       cookies: getSessionCookieFromResponse(responseSignIn),
       payload: {
-        data: testData.statuses.new,
+        data: newStatus,
       },
     });
 
     expect(response.statusCode).toBe(302);
+
+    const createdStatus = await models.status.query().findOne({ statusName: newStatus.statusName });
+
+    expect(createdStatus).toMatchObject(testData.statuses.new);
   });
 
   afterEach(async () => {

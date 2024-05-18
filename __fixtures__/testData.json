@@ -33,7 +33,11 @@
     }
   },
   "statuses": {
+    "newStatus": {
+      "statusName": "Test Status"
+    },
     "new": {
+      "id": 1,
       "statusName": "Test Status"
     }
   }
