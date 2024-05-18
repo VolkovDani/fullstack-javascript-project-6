@@ -56,6 +56,27 @@ describe('test statuses CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it('new', async () => {
+    const responseSignIn = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.existing,
+      },
+    });
+
+    const response = await app.inject({
+      method: 'POST',
+      url: app.reverse('statuses'),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+      payload: {
+        data: testData.statuses.new,
+      },
+    });
+
+    expect(response.statusCode).toBe(302);
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

@@ -31,5 +31,10 @@
       "firstName": "Carmenia",
       "lastName": "Larking"
     }
+  },
+  "statuses": {
+    "new": {
+      "statusName": "Test Status"
+    }
   }
 }
