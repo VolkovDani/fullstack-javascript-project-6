@@ -4,7 +4,7 @@ block header
   = t('views.statuses.index')
 
 block content
-  +buttonTo()(class="btn btn-warning mb-2 " value=t('views.statuses.actionButtons.create'))
+  a.btn.btn-warning(href=route('newStatus') type="button")= t('views.statuses.actionButtons.create')
   table.table.table-striped
     thead
       tr
@@ -16,7 +16,7 @@ block content
       each status in statuses
         tr
           td= status.id
-          td= status.name
+          td= status.statusName
           td= formatDate(status.createdAt)
           td
             .d-flex.flex-wrap
