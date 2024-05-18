@@ -48,6 +48,15 @@ export default {
       },
     },
     views: {
+      statuses: {
+        index: 'Статусы',
+        id: 'ID',
+        statusName: 'Наименование',
+        createdAt: 'Дата создания',
+        actionButtons: {
+          create: 'Создать статус',
+        },
+      },
       session: {
         new: {
           signIn: 'Вход',
