@@ -17,7 +17,7 @@ html(lang="ru")
         .collapse.navbar-collapse#navbarSupportedContent
           ul.navbar-nav.col-lg-auto.d-flex.flex-wrap.me-auto
             +linkButton('users')
-            +linkButton('users')
+            +linkButton('statuses')
           if isAuthenticated()
             +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
           else
