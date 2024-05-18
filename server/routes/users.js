@@ -89,5 +89,6 @@ export default (app) => {
       } catch ({ data }) {
         req.flash('error', i18next.t('flash.users.delete.error'));
       }
+      return reply;
     });
 };
