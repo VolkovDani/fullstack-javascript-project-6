@@ -55,6 +55,8 @@ export default {
         createdAt: 'Дата создания',
         actionButtons: {
           create: 'Создать статус',
+          edit: 'Изменить',
+          delete: 'Удалить',
         },
       },
       session: {
