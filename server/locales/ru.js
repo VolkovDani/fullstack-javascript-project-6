@@ -29,11 +29,18 @@ export default {
           errorAccess: 'Вы не можете редактировать или удалять другого пользователя',
         },
       },
+      statuses: {
+        create: {
+          success: 'Статус успешно создан',
+          error: 'Не удалось создать статус',
+        },
+      },
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
     },
     layouts: {
       application: {
         users: 'Пользователи',
+        statuses: 'Статусы',
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
@@ -41,6 +48,7 @@ export default {
     },
     mixins: {
       forms: {
+        statusName: 'Наименование',
         firstName: 'Имя',
         lastName: 'Фамилия',
         email: 'Email',
@@ -57,6 +65,10 @@ export default {
           create: 'Создать статус',
           edit: 'Изменить',
           delete: 'Удалить',
+        },
+        new: {
+          title: 'Создание статуса',
+          submit: 'Создать',
         },
       },
       session: {
