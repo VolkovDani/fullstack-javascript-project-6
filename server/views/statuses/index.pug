@@ -1,0 +1,28 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.statuses.index')
+
+block content
+  +buttonTo()(class="btn btn-warning mb-2 " value=t('views.statuses.actionButtons.create'))
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.statuses.id')
+        th= t('views.statuses.statusName')
+        th= t('views.statuses.createdAt')
+        th
+    tbody
+      each status in statuses
+        tr
+          td= status.id
+          td= status.name
+          td= formatDate(status.createdAt)
+          td
+            .d-flex.flex-wrap
+              a(href=routeTo('editUser', { id: 1 }) class="btn btn-warning me-1" type="button")= t('views.statuses.actionButtons.edit')
+              +buttonTo(routeTo('deleteUser', { id: 1 }), 'delete')(class="btn btn-danger" value=t('views.statuses.actionButtons.delete'))
+        //- td
+        //-   .d-flex.flex-wrap
+        //-     a(href=routeTo('editStatus', { id: status.id }) class="btn btn-warning me-1" type="button")= t('views.statuses.actionButtons.edit')
+        //-     +buttonTo(routeTo('deleteStatus', { id: status.id }), 'delete')(class="btn btn-danger" value=t('views.statuses.actionButtons.delete'))
