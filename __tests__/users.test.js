@@ -99,8 +99,6 @@ describe('test users CRUD', () => {
   it('patch', async () => {
     const userData = testData.users.existing;
     const patchedUser = testData.users.patched;
-    const user = await models.user.query().findOne({ id: 2 });
-
     const responseSignIn = await app.inject({
       method: 'POST',
       url: app.reverse('session'),
@@ -120,6 +118,8 @@ describe('test users CRUD', () => {
       },
     });
     expect(wrondResponse.statusCode).toBe(422);
+
+    const user = await models.user.query().findOne({ id: 2 });
     expect(user).not.toMatchObject(patchedUser);
 
     const { correctPatchData } = testData.patches;
@@ -131,11 +131,10 @@ describe('test users CRUD', () => {
         data: correctPatchData,
       },
     });
+    expect(correctResponse.statusCode).toBe(302);
 
     const updatedUser = await models.user.query().findOne({ id: 2 });
-
     expect(updatedUser).toMatchObject(patchedUser);
-    expect(correctResponse.statusCode).toBe(302);
   });
 
   it('delete', async () => {
