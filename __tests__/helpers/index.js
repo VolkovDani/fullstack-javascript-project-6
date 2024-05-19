@@ -17,6 +17,7 @@ export const prepareData = async (app) => {
 
   // получаем данные из фикстур и заполняем БД
   await knex('users').insert(getFixtureData('users.json'));
+  await knex('statuses').insert(getFixtureData('statuses.json'));
 };
 
 // получаем сессионные куки из ответа

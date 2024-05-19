@@ -37,12 +37,19 @@
     }
   },
   "statuses": {
+    "edit": {
+      "statusName": "Edited Status"
+    },
     "newStatus": {
       "statusName": "Test Status"
     },
     "new": {
       "id": 1,
       "statusName": "Test Status"
+    },
+    "expected": {
+      "id": 1,
+      "statusName": "Edited Status"
     }
   }
 }
