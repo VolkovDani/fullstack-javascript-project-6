@@ -20,5 +20,5 @@ block content
           td= formatDate(status.createdAt)
           td
             .d-flex.flex-wrap
-              a(href=routeTo('editUser', { id: 1 }) class="btn btn-warning me-1" type="button")= t('views.statuses.actionButtons.edit')
+              a(href=routeTo('editStatus', { id: status.id }) class="btn btn-warning me-1" type="button")= t('views.statuses.actionButtons.edit')
               +buttonTo(routeTo('deleteUser', { id: 1 }), 'delete')(class="btn btn-danger" value=t('views.statuses.actionButtons.delete'))

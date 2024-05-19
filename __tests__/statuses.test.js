@@ -91,6 +91,49 @@ describe('test statuses CRUD', () => {
     expect(createdStatus).toMatchObject(testData.statuses.new);
   });
 
+  it('edit', async () => {
+    const pageResponse = await app.inject({
+      method: 'GET',
+      url: app.reverse('editStatus', { id: 1 }),
+    });
+
+    expect(pageResponse.statusCode).toBe(302);
+
+    const pageResponseWithSignIn = await app.inject({
+      method: 'GET',
+      url: app.reverse('editStatus', { id: 1 }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    expect(pageResponseWithSignIn.statusCode).toBe(200);
+
+    const { edit, expected } = testData.statuses;
+
+    const patchResponse = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('patchStatus', { id: 1 }),
+      payload: {
+        data: edit,
+      },
+    });
+    // проверяю что роут существует
+    expect(patchResponse.statusCode).toBe(302);
+    let status;
+    status = await models.status.query().findOne({ id: expected.id });
+    expect(status).not.toMatchObject(expected);
+
+    await app.inject({
+      method: 'PATCH',
+      url: app.reverse('patchStatus', { id: 1 }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: edit,
+      },
+    });
+    status = await models.status.query().findOne({ id: expected.id });
+    expect(status).toMatchObject(expected);
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции
