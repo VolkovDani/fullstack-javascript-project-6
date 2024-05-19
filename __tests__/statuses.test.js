@@ -11,6 +11,8 @@ describe('test statuses CRUD', () => {
   let models;
   const testData = getTestData();
 
+  let signInResponse;
+
   beforeAll(async () => {
     app = fastify({
       exposeHeadRoutes: false,
@@ -29,6 +31,13 @@ describe('test statuses CRUD', () => {
   });
 
   beforeEach(async () => {
+    signInResponse = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.userForLogin,
+      },
+    });
   });
 
   it('index', async () => {
@@ -39,36 +48,27 @@ describe('test statuses CRUD', () => {
 
     expect(wrongResponse.statusCode).toBe(302);
 
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
-
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('statuses'),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
     });
 
     expect(response.statusCode).toBe(200);
   });
 
   it('new', async () => {
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
+    const responseWithoutSignIn = await app.inject({
+      method: 'GET',
+      url: app.reverse('newStatus'),
     });
+
+    expect(responseWithoutSignIn.statusCode).toBe(302);
 
     const responseWithPage = await app.inject({
       method: 'GET',
       url: app.reverse('newStatus'),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
     });
 
     expect(responseWithPage.statusCode).toBe(200);
@@ -78,7 +78,7 @@ describe('test statuses CRUD', () => {
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('statuses'),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
       payload: {
         data: newStatus,
       },
