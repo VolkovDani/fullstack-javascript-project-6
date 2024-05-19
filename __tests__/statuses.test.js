@@ -65,6 +65,14 @@ describe('test statuses CRUD', () => {
       },
     });
 
+    const responseWithPage = await app.inject({
+      method: 'GET',
+      url: app.reverse('newStatus'),
+      cookies: getSessionCookieFromResponse(responseSignIn),
+    });
+
+    expect(responseWithPage.statusCode).toBe(200);
+
     const { newStatus } = testData.statuses;
 
     const response = await app.inject({
