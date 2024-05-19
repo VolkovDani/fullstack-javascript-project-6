@@ -44,11 +44,11 @@
       "statusName": "Test Status"
     },
     "new": {
-      "id": 1,
+      "id": 3,
       "statusName": "Test Status"
     },
     "expected": {
-      "id": 1,
+      "id": 3,
       "statusName": "Edited Status"
     }
   }

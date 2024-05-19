@@ -92,26 +92,26 @@ describe('test statuses CRUD', () => {
   });
 
   it('edit', async () => {
+    const { edit, expected } = testData.statuses;
+
     const pageResponse = await app.inject({
       method: 'GET',
-      url: app.reverse('editStatus', { id: 1 }),
+      url: app.reverse('editStatus', { id: expected.id }),
     });
 
     expect(pageResponse.statusCode).toBe(302);
 
     const pageResponseWithSignIn = await app.inject({
       method: 'GET',
-      url: app.reverse('editStatus', { id: 1 }),
+      url: app.reverse('editStatus', { id: expected.id }),
       cookies: getSessionCookieFromResponse(signInResponse),
     });
 
     expect(pageResponseWithSignIn.statusCode).toBe(200);
 
-    const { edit, expected } = testData.statuses;
-
     const patchResponse = await app.inject({
       method: 'PATCH',
-      url: app.reverse('patchStatus', { id: 1 }),
+      url: app.reverse('patchStatus', { id: expected.id }),
       payload: {
         data: edit,
       },
@@ -124,7 +124,7 @@ describe('test statuses CRUD', () => {
 
     await app.inject({
       method: 'PATCH',
-      url: app.reverse('patchStatus', { id: 1 }),
+      url: app.reverse('patchStatus', { id: expected.id }),
       cookies: getSessionCookieFromResponse(signInResponse),
       payload: {
         data: edit,
