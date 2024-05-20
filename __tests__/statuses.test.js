@@ -134,6 +134,24 @@ describe('test statuses CRUD', () => {
     expect(status).toMatchObject(expected);
   });
 
+  it('delete', async () => {
+    const { expected } = testData.statuses;
+    const status = await models.status.query().findOne({ id: expected.id });
+
+    expect(status).toMatchObject(expected);
+    // удаляем пользователя
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteStatus', { id: Number(expected.id) }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    await expect(models.status
+      .query()
+      .findOne({ id: expected.id })
+      .throwIfNotFound()).rejects.toThrowError('NotFoundError');
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

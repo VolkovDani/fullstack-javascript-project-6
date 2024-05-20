@@ -69,5 +69,23 @@ export default (app) => {
         }
         return reply;
       },
+    )
+    .delete(
+      '/statuses/:id',
+      { name: 'deleteStatus', preValidation: app.authenticate },
+      async (req, reply) => {
+        const statusId = req.params.id;
+        try {
+          await app.objection.models.status
+            .query()
+            .findById(statusId)
+            .delete();
+          req.flash('info', i18next.t('flash.statuses.delete.success'));
+          reply.redirect(app.reverse('statuses'));
+        } catch ({ data }) {
+          req.flash('error', i18next.t('flash.statuses.delete.error'));
+        }
+        return reply;
+      },
     );
 };
