@@ -22,6 +22,14 @@ mixin input(entity, propertyName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
+mixin labelSelect(entity, propertyName)
+  - inputId = getInputId(propertyName)
+  label.input-group-text(for= inputId)= t(`mixins.labels.${propertyName}`)
+  select.form-select(id= inputId name= propertyName)
+    option
+    each item in entity
+      option(value= item.id)= item.name
+
 mixin submit(form = null)
   input(class='btn btn-warning' type='submit')&attributes(attributes)
 
