@@ -1,0 +1,54 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tasks.index')
+
+block content
+  a.btn.btn-warning(href=route('users') type="button")= t('views.tasks.actionButtons.create')
+  .card.shadow-sm
+  .card-body.p-4
+    +formFor()
+    form(action='/tasks' method='get')
+      .row
+        .col-12.col-md
+          .input-group.mb-3
+            +labelSelect(statuses, 'status')
+        .col-12.col-md
+          .input-group.mb-3
+            +labelSelect(executors, 'executor')
+        .col-12.col-md
+          .input-group.mb-3
+            +labelSelect(labels, 'label')
+      .mb-3.form-check
+        input.form-check-input(
+          id="data_isCreatorUser"
+          type="checkbox"
+          name="isCreatorUser"
+        )
+        label.form-check-label(for="data_isCreatorUser") Только мои задачи
+      +submit()  
+      input.btn.btn-warning(type="submit" value="Показать")
+
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.tasks.id')
+        th= t('views.tasks.taskName')
+        th= t('views.tasks.statusName')
+        th= t('views.tasks.author')
+        th= t('views.tasks.executer')
+        th= t('views.tasks.createdAt')
+        th
+    tbody
+      each task in tasks
+        tr
+          td= task.id
+          td= task.taskName
+          td= task.statusName
+          td= task.author
+          td= task.executer          
+          td= formatDate(task.createdAt)
+          td
+            .d-flex.flex-wrap
+              a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
+              +buttonTo(routeTo('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))
