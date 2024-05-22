@@ -22,7 +22,7 @@ mixin input(entity, propertyName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
-mixin labelSelect(entity, propertyName)
+mixin inputSelect(entity, propertyName)
   - inputId = getInputId(propertyName)
   label.input-group-text(for= inputId)= t(`mixins.labels.${propertyName}`)
   select.form-select(id= inputId name= propertyName)

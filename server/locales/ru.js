@@ -52,6 +52,7 @@ export default {
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
+        tasks: 'Задачи',
       },
     },
     mixins: {
@@ -61,6 +62,11 @@ export default {
         lastName: 'Фамилия',
         email: 'Email',
         password: 'Пароль',
+      },
+      labels: {
+        status: 'Статус',
+        executor: 'Исполнитель',
+        label: 'Метка',
       },
     },
     views: {
@@ -81,6 +87,19 @@ export default {
         edit: {
           title: 'Изменение статуса',
           submit: 'Изменить',
+        },
+      },
+      tasks: {
+        index: 'Задачи',
+        id: 'ID',
+        taskName: 'Наименование',
+        statusName: 'Статус',
+        author: 'Автор',
+        executer: 'Исполнитель',
+        createdAt: 'Дата создания',
+        actionButtons: {
+          checkMyTasks: 'Только мои задачи',
+          create: 'Создать задачу',
         },
       },
       session: {

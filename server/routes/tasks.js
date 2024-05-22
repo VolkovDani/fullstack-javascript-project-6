@@ -13,7 +13,7 @@ export default (app) => {
         console.log(statuses);
         const executors = await app.objection.models.user
           .query()
-          .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })))
+          .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
         const labels = [];
         reply.render('tasks/index', {
           tasks, statuses, executors, labels,

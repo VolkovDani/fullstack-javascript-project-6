@@ -4,32 +4,31 @@ block header
   = t('views.tasks.index')
 
 block content
-  a.btn.btn-warning(href=route('users') type="button")= t('views.tasks.actionButtons.create')
+  a.btn.btn-warning.mb-5(href=route('newTask') type="button")= t('views.tasks.actionButtons.create')
   .card.shadow-sm
-  .card-body.p-4
-    +formFor()
-    form(action='/tasks' method='get')
-      .row
-        .col-12.col-md
-          .input-group.mb-3
-            +labelSelect(statuses, 'status')
-        .col-12.col-md
-          .input-group.mb-3
-            +labelSelect(executors, 'executor')
-        .col-12.col-md
-          .input-group.mb-3
-            +labelSelect(labels, 'label')
-      .mb-3.form-check
-        input.form-check-input(
-          id="data_isCreatorUser"
-          type="checkbox"
-          name="isCreatorUser"
-        )
-        label.form-check-label(for="data_isCreatorUser") Только мои задачи
-      +submit()  
-      input.btn.btn-warning(type="submit" value="Показать")
+    .card-body.p-4
+      +formFor()
+      form(action='/tasks' method='get')
+        .row
+          .col-12.col-md
+            .input-group.mb-3
+              +inputSelect(statuses, 'status')
+          .col-12.col-md
+            .input-group.mb-3
+              +inputSelect(executors, 'executor')
+          //- .col-12.col-md
+          //-   .input-group.mb-3
+          //-     +inputSelect(labels, 'label')
+        .mb-3.form-switch
+          input.form-check-input(
+            id="data_isCreatorUser"
+            type="checkbox"
+            name="isCreatorUser"
+          )
+          label.form-check-label(for="data_isCreatorUser")= t('views.tasks.actionButtons.checkMyTasks')
+        +submit()
 
-  table.table.table-striped
+  table.table.table-striped.mt-5
     thead
       tr
         th= t('views.tasks.id')
