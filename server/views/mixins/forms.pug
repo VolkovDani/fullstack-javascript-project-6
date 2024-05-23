@@ -22,13 +22,37 @@ mixin input(entity, propertyName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
-mixin inputSelect(entity, propertyName)
+mixin inputTextarea(entity, propertyName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
-  label.input-group-text(for= inputId)= t(`mixins.labels.${propertyName}`)
-  select.form-select(id= inputId name= propertyName)
-    option
-    each item in entity
-      option(value= item.id)= item.name
+  .mb-3(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= t(`mixins.forms.${propertyName}`)
+    textarea(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+      rows="3"
+    )= _.get(entity, propertyName, '')
+
+mixin inputSelectFilter(entity, propertyName)
+  - inputId = getInputId(propertyName)
+    label.input-group-text(for= inputId)= t(`mixins.labels.${propertyName}`)
+    select.form-select(id= inputId name= propertyName)
+      option
+      each item in entity
+        option(value= item.id)= item.name
+
+mixin inputSelect(entity, propertyName, multiple = false)
+  - inputId = getInputId(propertyName)
+  .mb-3
+    label(for= inputId)= t(`mixins.labels.${propertyName}`)
+    select.form-select(id= inputId name= propertyName multiple= multiple ? 'multiple' : null)
+      option
+      each item in entity
+        option(value= item.id)= item.name
 
 mixin submit(form = null)
   input(class='btn btn-warning' type='submit')&attributes(attributes)

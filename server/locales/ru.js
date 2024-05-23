@@ -62,6 +62,8 @@ export default {
         lastName: 'Фамилия',
         email: 'Email',
         password: 'Пароль',
+        name: 'Наименование',
+        description: 'Описание',
       },
       labels: {
         status: 'Статус',
@@ -90,6 +92,7 @@ export default {
         },
       },
       tasks: {
+        new: 'Создание задачи',
         index: 'Задачи',
         id: 'ID',
         taskName: 'Наименование',
@@ -101,6 +104,7 @@ export default {
           checkMyTasks: 'Только мои задачи',
           create: 'Создать задачу',
         },
+        submit: 'Создать',
       },
       session: {
         new: {

@@ -1,0 +1,15 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tasks.new')
+
+block content
+  form(action="/tasks" method="post")
+    .form-floating.mb-3
+      +input(task, 'name', errors)
+    +inputTextarea(task, 'description', errors)
+    +inputSelect(statuses, 'status')
+    +inputSelect(users, 'executor')
+    //- +inputSelect(task, 'labelId', true)
+    +submit(task)(value=t('views.tasks.submit'))
+  //- <input class="btn btn-primary" type="submit" value="Создать" />

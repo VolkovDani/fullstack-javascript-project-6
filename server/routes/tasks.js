@@ -20,5 +20,28 @@ export default (app) => {
         });
         return reply;
       },
+    )
+    .get(
+      '/tasks/new',
+      { name: 'newTask', preValidation: app.authenticate },
+      async (req, reply) => {
+        const task = new app.objection.models.task();
+        const statuses = await app.objection.models.status
+          .query()
+          .then((statuses) => statuses.map(({ id, statusName }) => ({
+            id,
+            name: statusName,
+          })));
+        const users = await app.objection.models.user
+          .query()
+          .then((users) => users.map(
+            ({ firstName, lastName, id }) => ({
+              id,
+              name: `${firstName} ${lastName}`,
+            }),
+          ));
+        reply.render('tasks/new', { task, users, statuses });
+        return reply;
+      },
     );
 };
