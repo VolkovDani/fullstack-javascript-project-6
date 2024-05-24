@@ -12,10 +12,10 @@ block content
         .row
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(statuses, 'status')
+              +inputSelectFilter(statuses, 'statusId')
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(executors, 'executor')
+              +inputSelectFilter(executors, 'executorId')
           //- .col-12.col-md
           //-   .input-group.mb-3
           //-     +inputSelect(labels, 'label')
@@ -42,12 +42,12 @@ block content
       each task in tasks
         tr
           td= task.id
-          td= task.taskName
-          td= task.statusName
-          td= task.author
-          td= task.executer          
+          td= task.name
+          td= task.status.statusName
+          td= `${task.creator.firstName} ${task.creator.lastName}`
+          td= task.executor ? `${task.executor.firstName} ${task.executor.lastName}` : null
           td= formatDate(task.createdAt)
           td
             .d-flex.flex-wrap
-              a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
-              +buttonTo(routeTo('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))
+              a(href=routeTo('tasks', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
+              +buttonTo(routeTo('tasks', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))

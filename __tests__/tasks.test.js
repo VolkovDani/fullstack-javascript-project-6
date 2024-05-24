@@ -5,10 +5,10 @@ import fastify from 'fastify';
 import init from '../server/plugin.js';
 import { getSessionCookieFromResponse, getTestData, prepareData } from './helpers/index.js';
 
-describe('test statuses CRUD', () => {
+describe('test tasks CRUD', () => {
   let app;
   let knex;
-  // let models;
+  let models;
   const testData = getTestData();
 
   let signInResponse;
@@ -20,7 +20,7 @@ describe('test statuses CRUD', () => {
     });
     await init(app);
     knex = app.objection.knex;
-    // models = app.objection.models;
+    models = app.objection.models;
 
     // TODO: пока один раз перед тестами
     // тесты не должны зависеть друг от друга
@@ -56,6 +56,39 @@ describe('test statuses CRUD', () => {
 
     expect(response.statusCode).toBe(200);
   });
+
+  it('new', async () => {
+    const responseWithoutSignIn = await app.inject({
+      method: 'GET',
+      url: app.reverse('newTask'),
+    });
+
+    expect(responseWithoutSignIn.statusCode).toBe(302);
+
+    const responseWithPage = await app.inject({
+      method: 'GET',
+      url: app.reverse('newTask'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    expect(responseWithPage.statusCode).toBe(200);
+
+    const { newTask } = testData.tasks;
+
+    const response = await app.inject({
+      method: 'POST',
+      url: app.reverse('tasks'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: newTask,
+      },
+    });
+
+    expect(response.statusCode).toBe(302);
+    const createdTask = await models.task.query().findOne({ name: newTask.name });
+    expect(createdTask).toMatchObject(testData.tasks.new);
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

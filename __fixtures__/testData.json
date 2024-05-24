@@ -51,5 +51,21 @@
       "id": 3,
       "statusName": "Edited Status"
     }
+  },
+  "tasks": {
+    "newTask": {
+      "name": "Test task",
+      "description": "Some description",
+      "executorId": "",
+      "statusId": 3
+    },
+    "new": {
+      "id": 1,
+      "name": "Test task",
+      "description": "Some description",
+      "executorId": 0,
+      "statusId": 3,
+      "creatorId": 2
+    }
   }
 }

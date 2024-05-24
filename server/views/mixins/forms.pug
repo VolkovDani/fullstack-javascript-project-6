@@ -49,7 +49,7 @@ mixin inputSelect(entity, propertyName, multiple = false)
   - inputId = getInputId(propertyName)
   .mb-3
     label(for= inputId)= t(`mixins.labels.${propertyName}`)
-    select.form-select(id= inputId name= propertyName multiple= multiple ? 'multiple' : null)
+    select.form-select(id= inputId name=getInputName(propertyName) multiple= multiple ? 'multiple' : null)
       option
       each item in entity
         option(value= item.id)= item.name

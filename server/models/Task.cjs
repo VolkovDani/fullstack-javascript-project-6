@@ -7,12 +7,24 @@ module.exports = class Task extends BaseModel {
     return 'tasks';
   }
 
+  static modifiers = {
+    findCreator(query, creatorId) {
+      if (creatorId) query.where('creator.id', creatorId);
+    },
+    findStatus(query, statusId) {
+      if (statusId) query.where('status.id', statusId);
+    },
+    findExecutor(query, executorId) {
+      if (executorId) query.where('executor.id', executorId);
+    },
+  };
+
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['taskName', 'statusId', 'creatorId'],
+      required: ['name', 'statusId', 'creatorId'],
       properties: {
-        taskName: { type: 'string', minLength: 1 },
+        name: { type: 'string', minLength: 1 },
         description: { type: 'string' },
         statusId: { type: 'integer' },
         creatorId: { type: 'integer' },

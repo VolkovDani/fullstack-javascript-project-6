@@ -5,11 +5,9 @@ block header
 
 block content
   form(action="/tasks" method="post")
-    .form-floating.mb-3
-      +input(task, 'name', errors)
+    +input(task, 'name', errors)
     +inputTextarea(task, 'description', errors)
-    +inputSelect(statuses, 'status')
-    +inputSelect(users, 'executor')
+    +inputSelect(statuses, 'statusId')
+    +inputSelect(users, 'executorId')
     //- +inputSelect(task, 'labelId', true)
     +submit(task)(value=t('views.tasks.submit'))
-  //- <input class="btn btn-primary" type="submit" value="Создать" />

@@ -4,6 +4,12 @@ export default {
   translation: {
     appName: 'Менеджер задач',
     flash: {
+      tasks: {
+        create: {
+          success: 'Задача успешно создана',
+          error: 'Не удалось создать задачу',
+        },
+      },
       session: {
         create: {
           success: 'Вы залогинены',
@@ -66,9 +72,9 @@ export default {
         description: 'Описание',
       },
       labels: {
-        status: 'Статус',
-        executor: 'Исполнитель',
-        label: 'Метка',
+        statusId: 'Статус',
+        executorId: 'Исполнитель',
+        labelId: 'Метка',
       },
     },
     views: {
@@ -101,6 +107,8 @@ export default {
         executer: 'Исполнитель',
         createdAt: 'Дата создания',
         actionButtons: {
+          edit: 'Изменить',
+          delete: 'Удалить',
           checkMyTasks: 'Только мои задачи',
           create: 'Создать задачу',
         },
