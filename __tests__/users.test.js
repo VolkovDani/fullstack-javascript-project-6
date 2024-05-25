@@ -13,6 +13,7 @@ describe('test users CRUD', () => {
   let models;
   const testData = getTestData();
 
+  let signInResponse;
   beforeAll(async () => {
     app = fastify({
       exposeHeadRoutes: false,
@@ -31,6 +32,13 @@ describe('test users CRUD', () => {
   });
 
   beforeEach(async () => {
+    signInResponse = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.userForLogin,
+      },
+    });
   });
 
   it('index', async () => {
@@ -52,18 +60,10 @@ describe('test users CRUD', () => {
   });
 
   it('edit', async () => {
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
-
     const wrongResponse = await app.inject({
       method: 'GET',
       url: app.reverse('editUser', { id: 1 }),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
     });
 
     expect(wrongResponse.statusCode).toBe(302);
@@ -71,7 +71,7 @@ describe('test users CRUD', () => {
     const correctResponse = await app.inject({
       method: 'GET',
       url: app.reverse('editUser', { id: 2 }),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
     });
 
     expect(correctResponse.statusCode).toBe(200);
@@ -99,20 +99,12 @@ describe('test users CRUD', () => {
   it('patch', async () => {
     const userData = testData.users.existing;
     const patchedUser = testData.users.patched;
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: userData,
-      },
-    });
-
     const { UserNames } = testData.patches;
     // Запрос с указанием только имени и фамилии
     const wrondResponse = await app.inject({
       method: 'PATCH',
       url: app.reverse('patchUser', { id: Number(userData.id) }),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
       payload: {
         data: UserNames,
       },
@@ -126,7 +118,7 @@ describe('test users CRUD', () => {
     const correctResponse = await app.inject({
       method: 'PATCH',
       url: app.reverse('patchUser', { id: Number(userData.id) }),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
       payload: {
         data: correctPatchData,
       },
@@ -139,22 +131,14 @@ describe('test users CRUD', () => {
 
   it('delete', async () => {
     const userData = testData.users.existing;
-    // заходим за него в систему
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
 
-    expect(responseSignIn.statusCode).toBe(302);
+    expect(signInResponse.statusCode).toBe(302);
 
     // удаляем пользователя
     await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteUser', { id: Number(userData.id) }),
-      cookies: getSessionCookieFromResponse(responseSignIn),
+      cookies: getSessionCookieFromResponse(signInResponse),
     });
 
     await expect(models.user
