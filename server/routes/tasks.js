@@ -24,10 +24,6 @@ export default (app) => {
           .modify('findStatus', req.query.statusId)
           .modify('findExecutor', req.query.executorId);
 
-        // console.log(' ----------------------------------- ');
-        // console.log(tasks);
-        // console.log(' ----------------------------------- ');
-
         const statuses = await app.objection.models.status
           .query()
           .then((data) => data.map(({ id, statusName }) => ({ id, name: statusName })));
@@ -76,10 +72,6 @@ export default (app) => {
           .withGraphJoined('status')
           .withGraphJoined('creator')
           .withGraphJoined('executor');
-
-        console.log(' ----------------------------------- ');
-        console.log(task);
-        console.log(' ----------------------------------- ');
 
         reply.render('tasks/info', { task });
         return reply;
