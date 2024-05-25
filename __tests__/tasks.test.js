@@ -89,6 +89,34 @@ describe('test tasks CRUD', () => {
     expect(createdTask).toMatchObject(testData.tasks.new);
   });
 
+  it('task page', async () => {
+    const nonAuthResponse = await app.inject({
+      method: 'GET',
+      url: app.reverse('taskPage', { id: 1 }),
+    });
+
+    const { newTask } = testData.tasks;
+
+    await app.inject({
+      method: 'POST',
+      url: app.reverse('tasks'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: newTask,
+      },
+    });
+
+    expect(nonAuthResponse.statusCode).toBe(302);
+
+    const authedResponse = await app.inject({
+      method: 'GET',
+      url: app.reverse('taskPage', { id: 1 }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    expect(authedResponse.statusCode).toBe(200);
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

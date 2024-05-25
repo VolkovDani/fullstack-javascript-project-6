@@ -97,6 +97,15 @@ export default {
           submit: 'Изменить',
         },
       },
+      task: {
+        author: 'Автор',
+        executor: 'Исполнитель',
+        createdAt: 'Дата создания',
+        actionButtons: {
+          edit: ' Изменить',
+          delete: 'Удалить',
+        },
+      },
       tasks: {
         new: 'Создание задачи',
         index: 'Задачи',
