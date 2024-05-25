@@ -36,7 +36,8 @@ mixin inputTextarea(entity, propertyName, errors = {})
       class=classLine
       rows="3"
     )= _.get(entity, propertyName, '')
-
+    if !_.isEmpty(propertyErrors)
+          .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 mixin inputSelectFilter(entity, propertyName)
   - inputId = getInputId(propertyName)
     label.input-group-text(for= inputId)= t(`mixins.labels.${propertyName}`)
@@ -45,14 +46,23 @@ mixin inputSelectFilter(entity, propertyName)
       each item in entity
         option(value= item.id)= item.name
 
-mixin inputSelect(entity, propertyName, multiple = false)
+mixin inputSelect(entity, propertyName, errors = {}, multiple = false)
+  - propertyErrors = _.get(errors, propertyName)
   - inputId = getInputId(propertyName)
-  .mb-3
+  - classLine = 'form-select' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  .mb-3(class=(errors[propertyName] && 'has-danger'))
     label(for= inputId)= t(`mixins.labels.${propertyName}`)
-    select.form-select(id= inputId name=getInputName(propertyName) multiple= multiple ? 'multiple' : null)
+    select(
+      id= inputId
+      name=getInputName(propertyName)
+      multiple= multiple ? 'multiple' : null
+      class=classLine
+      )
       option
       each item in entity
         option(value= item.id)= item.name
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
 mixin submit(form = null)
   input(class='btn btn-warning' type='submit')&attributes(attributes)
