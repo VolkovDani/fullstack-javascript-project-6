@@ -151,20 +151,6 @@ describe('test tasks CRUD', () => {
 
     const updatedTask = await models.task.query().findOne({ id: 1 });
     expect(updatedTask).toMatchObject(patchedTask);
-    // expect(user).not.toMatchObject(patchedUser);
-
-    // const { correctPatchData } = testData.patches;
-    // const correctResponse = await app.inject({
-    //   method: 'PATCH',
-    //   url: app.reverse('patchUser', { id: Number(userData.id) }),
-    //   cookies: getSessionCookieFromResponse(signInResponse),
-    //   payload: {
-    //     data: correctPatchData,
-    //   },
-    // });
-    // expect(correctResponse.statusCode).toBe(302);
-
-    // const updatedUser = await models.user.query().findOne({ id: 2 });
   });
 
   afterEach(async () => {
