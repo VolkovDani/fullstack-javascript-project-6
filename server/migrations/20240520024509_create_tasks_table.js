@@ -5,24 +5,22 @@ export const up = (knex) => (
     table.increments('id').primary();
     table.string('name');
     table.string('description');
+
     table.integer('status_id')
-      // .unsigned()
-    table.foreign('id')
-      .references('status_id')
+      .references('id')
       .inTable('statuses')
-      // .onDelete('RESTRICT');
+      .onDelete('RESTRICT')
+
     table.integer('creator_id')
-      // .unsigned()
-    table
-      .foreign('id')
-      .references('creator_id')
+      .references('id')
       .inTable('users')
+      .onDelete('RESTRICT')
+
     table.integer('executor_id')
-      // .unsigned()
-    table.foreign('id')
-      .references('executor_id')
+      .references('id')
       .inTable('users')
-      // .onDelete('RESTRICT');
+      .onDelete('SET NULL')
+
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   })
