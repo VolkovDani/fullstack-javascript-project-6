@@ -7,20 +7,20 @@ export const up = (knex) => (
     table.string('description');
     table.integer('status_id')
       // .unsigned()
-    table.foreign('status_id')
-      .references('id')
+    table.foreign('id')
+      .references('status_id')
       .inTable('statuses')
       // .onDelete('RESTRICT');
     table.integer('creator_id')
       // .unsigned()
     table
-      .foreign('creator_id')
-      .references('id')
+      .foreign('id')
+      .references('creator_id')
       .inTable('users')
     table.integer('executor_id')
       // .unsigned()
-    table.foreign('executor_id')
-      .references('id')
+    table.foreign('id')
+      .references('executor_id')
       .inTable('users')
       // .onDelete('RESTRICT');
     table.timestamp('created_at').defaultTo(knex.fn.now());
