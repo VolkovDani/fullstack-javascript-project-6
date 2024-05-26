@@ -153,6 +153,50 @@ describe('test tasks CRUD', () => {
     expect(updatedTask).toMatchObject(patchedTask);
   });
 
+  it('delete', async () => {
+    const params = testData.users.new;
+    await app.inject({
+      method: 'POST',
+      url: app.reverse('users'),
+      payload: {
+        data: params,
+      },
+    });
+
+    const anotherUserAuth = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.userForSecondLogin,
+      },
+    });
+
+    const taskForDeleting = testData.tasks.delete;
+
+    const deleteResponseFromAnotherUser = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteTask', { id: taskForDeleting.id }),
+      cookies: getSessionCookieFromResponse(anotherUserAuth),
+    });
+    expect(deleteResponseFromAnotherUser.statusCode).toBe(302);
+
+    await expect(models.task
+      .query()
+      .findOne({ id: 1 })
+      .throwIfNotFound()).resolves.not.toThrowError('NotFoundError');
+
+    const deleteResponseFromCreator = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteTask', { id: taskForDeleting.id }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+    expect(deleteResponseFromCreator.statusCode).toBe(302);
+    await expect(models.task
+      .query()
+      .findOne({ id: 1 })
+      .throwIfNotFound()).rejects.toThrowError('NotFoundError');
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

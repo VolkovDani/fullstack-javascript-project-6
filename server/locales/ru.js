@@ -16,7 +16,10 @@ export default {
         edit: {
           errorAccess: 'Задачу может удалить только её автор',
         },
-
+        delete: {
+          success: 'Задача успешно удалена',
+          errorAccess: 'Задачу может удалить только её автор',
+        },
       },
       session: {
         create: {

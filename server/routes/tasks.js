@@ -3,6 +3,13 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
+  const getStatusesForSelect = () => app.objection.models.status
+    .query()
+    .then((items) => items.map(({ id, statusName }) => ({
+      id,
+      name: statusName,
+    })));
+
   app
     .get(
       '/tasks',
@@ -24,9 +31,7 @@ export default (app) => {
           .modify('findStatus', req.query.statusId)
           .modify('findExecutor', req.query.executorId);
 
-        const statuses = await app.objection.models.status
-          .query()
-          .then((data) => data.map(({ id, statusName }) => ({ id, name: statusName })));
+        const statuses = await getStatusesForSelect();
         const executors = await app.objection.models.user
           .query()
           .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
@@ -42,12 +47,7 @@ export default (app) => {
       { name: 'newTask', preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
-        const statuses = await app.objection.models.status
-          .query()
-          .then((items) => items.map(({ id, statusName }) => ({
-            id,
-            name: statusName,
-          })));
+        const statuses = await getStatusesForSelect();
         const users = await app.objection.models.user
           .query()
           .then((items) => items.map(
@@ -90,12 +90,7 @@ export default (app) => {
           .withGraphJoined('creator')
           .withGraphJoined('executor');
 
-        const statuses = await app.objection.models.status
-          .query()
-          .then((items) => items.map(({ id, statusName }) => ({
-            id,
-            name: statusName,
-          })));
+        const statuses = await getStatusesForSelect();
         const users = await app.objection.models.user
           .query()
           .then((items) => items.map(
@@ -134,12 +129,7 @@ export default (app) => {
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
-          const statuses = await app.objection.models.status
-            .query()
-            .then((items) => items.map(({ id, statusName }) => ({
-              id,
-              name: statusName,
-            })));
+          const statuses = await getStatusesForSelect();
           const users = await app.objection.models.user
             .query()
             .then((items) => items.map(
@@ -175,12 +165,7 @@ export default (app) => {
           const task = new app.objection.models.task();
           task.$set({ ...req.body.data, id: taskId });
 
-          const statuses = await app.objection.models.status
-            .query()
-            .then((items) => items.map(({ id, statusName }) => ({
-              id,
-              name: statusName,
-            })));
+          const statuses = await getStatusesForSelect();
           const users = await app.objection.models.user
             .query()
             .then((items) => items.map(
@@ -198,6 +183,33 @@ export default (app) => {
             statuses,
             users,
           });
+        }
+        return reply;
+      },
+    )
+    .delete(
+      '/tasks/:id',
+      { name: 'deleteTask', preValidation: app.authenticate },
+      async (req, reply) => {
+        const taskId = Number(req.params.id);
+        const userId = Number(req.session.get('passport').id);
+        const task = await app.objection.models.task
+          .query()
+          .findById(taskId);
+        if (userId !== task.creatorId) {
+          req.flash('error', i18next.t('flash.tasks.delete.errorAccess'));
+          reply.redirect(app.reverse('tasks'));
+          return reply;
+        }
+        try {
+          await app.objection.models.task
+            .query()
+            .findById(taskId)
+            .delete();
+          req.flash('info', i18next.t('flash.tasks.delete.success'));
+          reply.redirect(app.reverse('tasks'));
+        } catch ({ data }) {
+          req.flash('error', i18next.t('flash.tasks.delete.error'));
         }
         return reply;
       },

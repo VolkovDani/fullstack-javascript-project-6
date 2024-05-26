@@ -31,9 +31,9 @@ block content
         span
           = formatDate(task.createdAt)
       .d-flex.flex-wrap
-        a.btn.btn-warning.me-1(href="/tasks/1/edit")
+        a.btn.btn-warning.me-1(href=routeTo('editTask', { id: task.id }))
           = t('views.task.actionButtons.edit')
-        form(action="/tasks/1" method="post")
+        form(action=routeTo('deleteTask', { id: task.id }) method="post")
           input(name="_method" type="hidden" value="delete")
           input(
             class="btn btn-danger"

@@ -8,7 +8,7 @@ block content
   .card.shadow-sm
     .card-body.p-4
       +formFor()
-      form(action='/tasks' method='get')
+      form(action=route('tasks') method='get')
         .row
           .col-12.col-md
             .input-group.mb-3
@@ -52,4 +52,4 @@ block content
           td
             .d-flex.flex-wrap
               a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
-              +buttonTo(routeTo('tasks', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))
+              +buttonTo(routeTo('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))

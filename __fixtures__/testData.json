@@ -22,6 +22,10 @@
       "passwordDigest": "87c6374c24969f2af49433baa6d8b96e2bdb17a509b79049d2edb4fde98e4c46",
       "firstName": "Carmenia",
       "lastName": "Larking"
+    },
+    "userForSecondLogin": {
+      "email": "malika_hodkiewicz75@live.com",
+      "password": "RLJvaIgPOnX5r03"
     }
   },
   "patches": {
@@ -58,6 +62,9 @@
     }
   },
   "tasks": {
+    "delete": {
+      "id": 1
+    },
     "patched": {
       "id": 1,
       "name": "Test task",
