@@ -51,5 +51,5 @@ block content
           td= formatDate(task.createdAt)
           td
             .d-flex.flex-wrap
-              a(href=routeTo('tasks', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
+              a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
               +buttonTo(routeTo('tasks', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))

@@ -5,10 +5,17 @@ export default {
     appName: 'Менеджер задач',
     flash: {
       tasks: {
+        patch: {
+          success: 'Задача успешно изменена',
+        },
         create: {
           success: 'Задача успешно создана',
           error: 'Не удалось создать задачу',
         },
+        edit: {
+          errorAccess: 'Задачу может удалить только её автор',
+        },
+
       },
       session: {
         create: {
@@ -107,6 +114,7 @@ export default {
         },
       },
       tasks: {
+        edit: 'Изменение задачи',
         new: 'Создание задачи',
         index: 'Задачи',
         id: 'ID',

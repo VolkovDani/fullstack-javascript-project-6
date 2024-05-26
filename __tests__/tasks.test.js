@@ -117,6 +117,23 @@ describe('test tasks CRUD', () => {
     expect(authedResponse.statusCode).toBe(200);
   });
 
+  it('edit', async () => {
+    const nonAuthResponse = await app.inject({
+      method: 'GET',
+      url: app.reverse('editTask', { id: 1 }),
+    });
+
+    expect(nonAuthResponse.statusCode).toBe(302);
+
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('editTask', { id: 1 }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    expect(response.statusCode).toBe(200);
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

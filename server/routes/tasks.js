@@ -77,13 +77,46 @@ export default (app) => {
         return reply;
       },
     )
+    .get(
+      '/tasks/:id/edit',
+      { name: 'editTask', preValidation: app.authenticate },
+      async (req, reply) => {
+        const taskId = req.params.id;
+        const task = await app.objection.models.task
+          .query()
+          .alias('task')
+          .findOne({ 'task.id': taskId })
+          .withGraphJoined('status')
+          .withGraphJoined('creator')
+          .withGraphJoined('executor');
+
+        const statuses = await app.objection.models.status
+          .query()
+          .then((items) => items.map(({ id, statusName }) => ({
+            id,
+            name: statusName,
+          })));
+        const users = await app.objection.models.user
+          .query()
+          .then((items) => items.map(
+            ({ firstName, lastName, id }) => ({
+              id,
+              name: `${firstName} ${lastName}`,
+            }),
+          ));
+
+        reply.render('tasks/edit', {
+          id: taskId, task, statuses, users,
+        });
+        return reply;
+      },
+    )
     .post(
       '/tasks',
       { preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
         task.$set(req.body.data);
-
         try {
           const creatorId = req.session.get('passport').id;
           const {

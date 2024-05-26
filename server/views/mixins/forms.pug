@@ -46,7 +46,7 @@ mixin inputSelectFilter(entity, propertyName)
       each item in entity
         option(value= item.id)= item.name
 
-mixin inputSelect(entity, propertyName, errors = {}, multiple = false)
+mixin inputSelect(entity, propertyName, errors = {}, object)
   - propertyErrors = _.get(errors, propertyName)
   - inputId = getInputId(propertyName)
   - classLine = 'form-select' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
@@ -55,12 +55,14 @@ mixin inputSelect(entity, propertyName, errors = {}, multiple = false)
     select(
       id= inputId
       name=getInputName(propertyName)
-      multiple= multiple ? 'multiple' : null
       class=classLine
       )
       option
       each item in entity
-        option(value= item.id)= item.name
+        option(
+          value= item.id
+          selected= (object[propertyName] === item.id) ? 'selected' : false 
+          )= item.name
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
