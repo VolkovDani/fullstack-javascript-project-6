@@ -7,6 +7,7 @@ export default {
       tasks: {
         patch: {
           success: 'Задача успешно изменена',
+          error: 'Не удалось изменить задачу',
         },
         create: {
           success: 'Задача успешно создана',

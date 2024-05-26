@@ -134,6 +134,39 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it('patch', async () => {
+    const { id, patch } = testData.patches.task;
+    // Запрос с указанием только имени и фамилии
+    const wrondResponse = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('patchTask', { id: Number(id) }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: patch,
+      },
+    });
+    expect(wrondResponse.statusCode).toBe(302);
+
+    const patchedTask = testData.tasks.patched;
+
+    const updatedTask = await models.task.query().findOne({ id: 1 });
+    expect(updatedTask).toMatchObject(patchedTask);
+    // expect(user).not.toMatchObject(patchedUser);
+
+    // const { correctPatchData } = testData.patches;
+    // const correctResponse = await app.inject({
+    //   method: 'PATCH',
+    //   url: app.reverse('patchUser', { id: Number(userData.id) }),
+    //   cookies: getSessionCookieFromResponse(signInResponse),
+    //   payload: {
+    //     data: correctPatchData,
+    //   },
+    // });
+    // expect(correctResponse.statusCode).toBe(302);
+
+    // const updatedUser = await models.user.query().findOne({ id: 2 });
+  });
+
   afterEach(async () => {
     // Пока Segmentation fault: 11
     // после каждого теста откатываем миграции

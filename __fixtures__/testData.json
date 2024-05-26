@@ -25,6 +25,11 @@
     }
   },
   "patches": {
+    "task": {
+      "id": 1,
+      "statusId": 1,
+      "executorId": 3
+    },
     "UserNames": {
       "firstName": "Carmenia",
       "lastName": "Larking"
@@ -53,6 +58,14 @@
     }
   },
   "tasks": {
+    "patched": {
+      "id": 1,
+      "name": "Test task",
+      "description": "Some description",
+      "statusId": 1,
+      "creatorId": 2,
+      "executorId": 0
+    },
     "newTask": {
       "name": "Test task",
       "description": "Some description",

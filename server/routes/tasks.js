@@ -111,6 +111,51 @@ export default (app) => {
         return reply;
       },
     )
+    .patch(
+      '/tasks/:id',
+      { name: 'patchTask', preValidation: app.authenticate },
+      async (req, reply) => {
+        const taskId = req.params.id;
+        const patchedTask = await app.objection.models.task
+          .query()
+          .findById(taskId);
+        try {
+          await patchedTask.$query().patch(req.body.data);
+          req.flash('info', i18next.t('flash.tasks.patch.success'));
+          reply.redirect(app.reverse('tasks'));
+        } catch ({ data }) {
+          reply.statusCode = 422;
+          // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
+          const task = new app.objection.models.task();
+          task.$set({ ...req.body.data, id: taskId });
+
+          const statuses = await app.objection.models.status
+            .query()
+            .then((items) => items.map(({ id, statusName }) => ({
+              id,
+              name: statusName,
+            })));
+          const users = await app.objection.models.user
+            .query()
+            .then((items) => items.map(
+              ({ firstName, lastName, id }) => ({
+                id,
+                name: `${firstName} ${lastName}`,
+              }),
+            ));
+
+          req.flash('error', i18next.t('flash.tasks.patch.error'));
+          reply.render('tasks/edit', {
+            id: taskId,
+            task,
+            errors: data,
+            statuses,
+            users,
+          });
+        }
+        return reply;
+      },
+    )
     .post(
       '/tasks',
       { preValidation: app.authenticate },
