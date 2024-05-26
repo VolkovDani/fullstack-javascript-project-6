@@ -33,6 +33,20 @@ module.exports = class Task extends BaseModel {
     };
   }
 
+  $parseJson(json, opt) {
+    const superJson = super.$parseJson(json, opt);
+    const dict = {
+      name: (name) => name,
+      description: (description) => description,
+      statusId: (statusId) => Number(statusId),
+      creatorId: (creatorId) => Number(creatorId),
+      executorId: (executorId) => Number(executorId),
+    };
+    const convertedJson = Object.entries(superJson)
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: dict[key](value) }), {});
+    return convertedJson;
+  }
+
   static get relationMappings() {
     return {
       status: {
