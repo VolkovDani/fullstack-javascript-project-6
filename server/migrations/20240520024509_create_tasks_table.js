@@ -6,17 +6,23 @@ export const up = (knex) => (
     table.string('name');
     table.string('description');
     table.integer('status_id')
-      .unsigned()
+      // .unsigned()
+    table.foreign('status_id')
       .references('id')
-      .inTable('statuses');
+      .inTable('statuses')
+      // .onDelete('RESTRICT');
     table.integer('creator_id')
-      .unsigned()
+      // .unsigned()
+    table
+      .foreign('creator_id')
       .references('id')
-      .inTable('users');
+      .inTable('users')
     table.integer('executor_id')
-      .unsigned()
+      // .unsigned()
+    table.foreign('executor_id')
       .references('id')
-      .inTable('users');
+      .inTable('users')
+      // .onDelete('RESTRICT');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   })
