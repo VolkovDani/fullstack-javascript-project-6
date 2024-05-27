@@ -99,31 +99,22 @@ const labels = await app.objection.models.label.query();
       { preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
-        const creatorId = req.session.get('passport').id;
         req.body.data.creatorId = req.session.get('passport').id;
-        task.$setJson(req.body.data);
+        const { labels: reqLabels, ...rest } = req.body.data;
         try {
-          const {
-            name, description, statusId, executorId,
-          } = req.body.data;
-          const preparedBodyData = {
-            name,
-            creatorId,
-            description,
-            statusId,
-            executorId,
-          };
-          const validTask = await app.objection.models.task.fromJson(preparedBodyData);
+          task.$setJson(rest);
+          const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.query().insert(validTask);
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
+const labels = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data,
+            task, users, statuses, errors: data.data, labels,
           });
         }
         return reply;
