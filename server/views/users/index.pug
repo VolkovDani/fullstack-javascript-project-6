@@ -1,22 +1,23 @@
 extends ../layouts/application.pug
 
 block content
-  table.table.table-striped
-    thead
-      tr
-        th= t('views.users.id')
-        th= t('views.users.fullName')
-        th= t('views.users.email')
-        th= t('views.users.createdAt')
-        th= t('views.users.actions')
-    tbody
-      each user in users
+  .table-responsive
+    table.table.table-borderless.table-striped.mt-5.bg-white
+      thead
         tr
-          td= user.id
-          td!= `${user.firstName} ${user.lastName}`
-          td= user.email
-          td= formatDate(user.createdAt)
-          td
-            .d-flex.flex-wrap
-              a(href=routeTo('editUser', { id: user.id }) class="btn btn-warning me-1" type="button")= t('views.users.actionButtons.edit')
-              +buttonTo(routeTo('deleteUser', { id: user.id }), 'delete')(class="btn btn-danger" value=t('views.users.actionButtons.delete'))
+          th= t('views.users.id')
+          th= t('views.users.fullName')
+          th= t('views.users.email')
+          th= t('views.users.createdAt')
+          th= t('views.users.actions')
+      tbody
+        each user in users
+          tr
+            td= user.id
+            td!= `${user.firstName} ${user.lastName}`
+            td= user.email
+            td= formatDate(user.createdAt)
+            td
+              .d-flex.flex-wrap
+                a(href=routeTo('editUser', { id: user.id }) class="btn btn-warning me-1" type="button")= t('views.users.actionButtons.edit')
+                +buttonTo(routeTo('deleteUser', { id: user.id }), 'delete')(class="btn btn-danger" value=t('views.users.actionButtons.delete'))
