@@ -3,7 +3,7 @@
 const objectionUnique = require('objection-unique');
 const BaseModel = require('./BaseModel.cjs');
 
-const unique = objectionUnique({ fields: ['labelName'] });
+const unique = objectionUnique({ fields: ['name'] });
 
 module.exports = class Label extends unique(BaseModel) {
   static get tableName() {
