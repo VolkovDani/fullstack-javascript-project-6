@@ -16,9 +16,9 @@ block content
           .col-12.col-md
             .input-group.mb-3
               +inputSelectFilter(executors, 'executorId')
-          //- .col-12.col-md
-          //-   .input-group.mb-3
-          //-     +inputSelect(labels, 'label')
+          .col-12.col-md
+            .input-group.mb-3
+              +inputSelectFilter(labels, 'labelId')
         .mb-3.form-switch
           input.form-check-input(
             id="data_isCreatorUser"

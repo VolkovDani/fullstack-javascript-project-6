@@ -20,6 +20,7 @@ html(lang="ru")
             if isAuthenticated()
               +linkButton('statuses')
               +linkButton('tasks')
+              +linkButton('labels')
           if isAuthenticated()
             +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
           else

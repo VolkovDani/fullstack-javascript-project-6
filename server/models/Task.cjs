@@ -17,6 +17,9 @@ module.exports = class Task extends BaseModel {
     findExecutor(query, executorId) {
       if (executorId) query.where('executor.id', executorId);
     },
+    findLabels(query, labelsIds) {
+      if (labelsIds) query.where('labels.labelId', labelsIds);
+    },
   };
 
   static get jsonSchema() {
@@ -42,6 +45,7 @@ module.exports = class Task extends BaseModel {
       statusId: (statusId) => Number(statusId),
       creatorId: (creatorId) => Number(creatorId),
       executorId: (executorId) => Number(executorId),
+      labelsIds: (labelsIds) => labelsIds,
     };
     const convertedJson = Object.entries(superJson)
       .reduce((acc, [key, value]) => ({ ...acc, [key]: dict[key](value) }), {});
@@ -72,6 +76,18 @@ module.exports = class Task extends BaseModel {
         join: {
           from: 'tasks.executorId',
           to: 'users.id',
+        },
+      },
+      labels: {
+        relation: BaseModel.ManyToManyRelation,
+        modelClass: 'Label.cjs',
+        join: {
+          from: 'tasks.id',
+          through: {
+            from: 'labels_for_tasks.taskId',
+            to: 'labels_for_tasks.labelId',
+          },
+          to: 'labels.id',
         },
       },
     };

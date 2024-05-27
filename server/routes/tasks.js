@@ -27,15 +27,17 @@ export default (app) => {
           .withGraphJoined('status')
           .withGraphJoined('creator')
           .withGraphJoined('executor')
+          .withGraphJoined('labels')
           .modify('findCreator', isCurrentUserTasks())
           .modify('findStatus', req.query.statusId)
-          .modify('findExecutor', req.query.executorId);
+          .modify('findExecutor', req.query.executorId)
+          .modify('findLabels', req.query.labelId);
 
         const statuses = await getStatusesForSelect();
         const executors = await app.objection.models.user
           .query()
           .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
-        const labels = [];
+        const labels = await app.objection.models.label.query();
         reply.render('tasks/index', {
           tasks, statuses, executors, labels,
         });
@@ -111,9 +113,10 @@ export default (app) => {
       { preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
+        const creatorId = req.session.get('passport').id;
+        req.body.data.creatorId = req.session.get('passport').id;
         task.$setJson(req.body.data);
         try {
-          const creatorId = req.session.get('passport').id;
           const {
             name, description, statusId, executorId,
           } = req.body.data;
@@ -121,8 +124,8 @@ export default (app) => {
             name,
             creatorId,
             description,
-            statusId: Number(statusId),
-            executorId: Number(executorId),
+            statusId,
+            executorId,
           };
           const validTask = await app.objection.models.task.fromJson(preparedBodyData);
           await app.objection.models.task.query().insert(validTask);

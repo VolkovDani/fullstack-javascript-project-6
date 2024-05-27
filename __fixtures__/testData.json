@@ -87,5 +87,21 @@
       "statusId": 1,
       "creatorId": 2
     }
+  },
+  "labels": {
+    "newLabel": {
+      "name":"Test label"
+    },
+    "new": {
+      "id": 1,
+      "name":"Test label"
+    },
+    "edit": {
+      "name": "Edit label"
+    },
+    "expected": {
+      "id": 1,
+      "name": "Edit label"
+    }
   }
 }
