@@ -114,7 +114,7 @@ const labels = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data.data, labels,
+            task, users, statuses, errors: data, labels,
           });
         }
         return reply;
