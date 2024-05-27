@@ -110,7 +110,7 @@ const labels = await app.objection.models.label.query();
         } catch ({ data }) {
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
-const labels = await app.objection.models.label.query();
+          const labels = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
