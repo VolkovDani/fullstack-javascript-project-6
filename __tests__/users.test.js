@@ -96,6 +96,40 @@ describe('test users CRUD', () => {
     expect(user).toMatchObject(expected);
   });
 
+  it('drop user with tasks', async () => {
+    const { newTask } = testData.tasks;
+    const { userForLogin, existing } = testData.users;
+
+    await app.inject({
+      method: 'POST',
+      url: app.reverse('tasks'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: newTask,
+      },
+    });
+    const deleteUserResponse = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id: Number(userForLogin.id) }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+    expect(deleteUserResponse.statusCode).toBe(302);
+    const userFromDB = await models.user.query().findById(existing.id);
+    const { password, ...userData } = existing;
+    expect(userFromDB).toMatchObject(userData);
+
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteTask', { id: testData.tasks.new.id }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    await expect(models.task
+      .query()
+      .findById(testData.tasks.new.id)
+      .throwIfNotFound()).rejects.toThrowError('NotFoundError');
+  });
+
   it('patch', async () => {
     const userData = testData.users.existing;
     const patchedUser = testData.users.patched;
@@ -131,9 +165,6 @@ describe('test users CRUD', () => {
 
   it('delete', async () => {
     const userData = testData.users.existing;
-
-    expect(signInResponse.statusCode).toBe(302);
-
     // удаляем пользователя
     await app.inject({
       method: 'DELETE',
