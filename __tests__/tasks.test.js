@@ -151,6 +151,14 @@ describe('test tasks CRUD', () => {
 
     const updatedTask = await models.task.query().findOne({ id: 1 });
     expect(updatedTask).toMatchObject(patchedTask);
+
+    const responseWithIndexPage = await app.inject({
+      method: 'GET',
+      url: app.reverse('tasks'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    expect(responseWithIndexPage.statusCode).toBe(200);
   });
 
   it('delete', async () => {

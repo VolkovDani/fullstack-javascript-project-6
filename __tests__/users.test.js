@@ -94,6 +94,13 @@ describe('test users CRUD', () => {
     };
     const user = await models.user.query().findOne({ email: params.email });
     expect(user).toMatchObject(expected);
+
+    const responseIndexPage = await app.inject({
+      method: 'GET',
+      url: app.reverse('users'),
+    });
+
+    expect(responseIndexPage.statusCode).toBe(200);
   });
 
   it('drop user with tasks', async () => {

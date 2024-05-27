@@ -89,6 +89,14 @@ describe('test statuses CRUD', () => {
     const createdStatus = await models.status.query().findOne({ statusName: newStatus.statusName });
 
     expect(createdStatus).toMatchObject(testData.statuses.new);
+
+    const responseIndexPage = await app.inject({
+      method: 'GET',
+      url: app.reverse('statuses'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    expect(responseIndexPage.statusCode).toBe(200);
   });
 
   it('edit', async () => {
