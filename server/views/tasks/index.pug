@@ -27,29 +27,29 @@ block content
           )
           label.form-check-label(for="data_isCreatorUser")= t('views.tasks.actionButtons.checkMyTasks')
         +submit()
-
-  table.table.table-striped.mt-5
-    thead
-      tr
-        th= t('views.tasks.id')
-        th= t('views.tasks.taskName')
-        th= t('views.tasks.statusName')
-        th= t('views.tasks.author')
-        th= t('views.tasks.executer')
-        th= t('views.tasks.createdAt')
-        th
-    tbody
-      each task in tasks
+  .table-responsive
+    table.table.table-striped.mt-5
+      thead
         tr
-          td= task.id
-          td
-            a(href=routeTo('taskPage', { id: task.id }))
-              = task.name
-          td= task.status.statusName
-          td= `${task.creator.firstName} ${task.creator.lastName}`
-          td= task.executor ? `${task.executor.firstName} ${task.executor.lastName}` : null
-          td= formatDate(task.createdAt)
-          td
-            .d-flex.flex-wrap
-              a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
-              +buttonTo(routeTo('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))
+          th= t('views.tasks.id')
+          th= t('views.tasks.taskName')
+          th= t('views.tasks.statusName')
+          th= t('views.tasks.author')
+          th= t('views.tasks.executer')
+          th= t('views.tasks.createdAt')
+          th
+      tbody
+        each task in tasks
+          tr
+            td= task.id
+            td
+              a(href=routeTo('taskPage', { id: task.id }))
+                = task.name
+            td= task.status.statusName
+            td= `${task.creator.firstName} ${task.creator.lastName}`
+            td= task.executor ? `${task.executor.firstName} ${task.executor.lastName}` : null
+            td= formatDate(task.createdAt)
+            td
+              .d-flex.flex-wrap
+                a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
+                +buttonTo(routeTo('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))
