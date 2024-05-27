@@ -25,6 +25,19 @@ module.exports = class User extends unique(BaseModel) {
     };
   }
 
+  static get relationMappings() {
+    return {
+      tasks: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: 'Tasks.cjs',
+        join: {
+          from: 'users.id',
+          to: 'tasks.cretorId',
+        },
+      },
+    };
+  }
+
   set password(value) {
     this.passwordDigest = encrypt(value);
   }
