@@ -18,7 +18,7 @@ module.exports = class Task extends BaseModel {
       if (executorId) query.where('executor.id', executorId);
     },
     findLabels(query, labelsIds) {
-      if (labelsIds) query.where('labels.labelId', labelsIds);
+      if (labelsIds) query.where('labels.id', labelsIds);
     },
   };
 
@@ -45,7 +45,7 @@ module.exports = class Task extends BaseModel {
       statusId: (statusId) => Number(statusId),
       creatorId: (creatorId) => Number(creatorId),
       executorId: (executorId) => Number(executorId),
-      labelsIds: (labelsIds) => labelsIds,
+      labelId: (labelId) => Number(labelId),
     };
     const convertedJson = Object.entries(superJson)
       .reduce((acc, [key, value]) => ({ ...acc, [key]: dict[key](value) }), {});
