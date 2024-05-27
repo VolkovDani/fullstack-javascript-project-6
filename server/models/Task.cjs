@@ -1,5 +1,7 @@
 // @ts-check
 
+const _ = require('lodash');
+
 const BaseModel = require('./BaseModel.cjs');
 
 module.exports = class Task extends BaseModel {
@@ -45,7 +47,6 @@ module.exports = class Task extends BaseModel {
       statusId: (statusId) => Number(statusId),
       creatorId: (creatorId) => Number(creatorId),
       executorId: (executorId) => Number(executorId),
-      labelId: (labelId) => Number(labelId),
     };
     const convertedJson = Object.entries(superJson)
       .reduce((acc, [key, value]) => ({ ...acc, [key]: dict[key](value) }), {});
