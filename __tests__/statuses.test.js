@@ -86,7 +86,7 @@ describe('test statuses CRUD', () => {
 
     expect(response.statusCode).toBe(302);
 
-    const createdStatus = await models.status.query().findOne({ statusName: newStatus.statusName });
+    const createdStatus = await models.status.query().findOne({ name: newStatus.name });
 
     expect(createdStatus).toMatchObject(testData.statuses.new);
 

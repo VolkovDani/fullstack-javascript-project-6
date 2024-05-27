@@ -47,18 +47,18 @@
   },
   "statuses": {
     "edit": {
-      "statusName": "Edited Status"
+      "name": "Edited Status"
     },
     "newStatus": {
-      "statusName": "Test Status"
+      "name": "Test Status"
     },
     "new": {
       "id": 3,
-      "statusName": "Test Status"
+      "name": "Test Status"
     },
     "expected": {
       "id": 3,
-      "statusName": "Edited Status"
+      "name": "Edited Status"
     }
   },
   "tasks": {

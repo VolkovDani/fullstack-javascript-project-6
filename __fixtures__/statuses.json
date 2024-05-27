@@ -1,8 +1,8 @@
 [
   {
-    "statusName": "First Status"
+    "name": "First Status"
   },
   {
-    "statusName": "Second Status"
+    "name": "Second Status"
   }
 ]
