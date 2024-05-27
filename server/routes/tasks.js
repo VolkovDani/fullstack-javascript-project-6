@@ -6,10 +6,7 @@ export default (app) => {
   const getStatusesForSelect = () => app.objection.models.status.query();
   const getUsersForSelect = () => app.objection.models.user
     .query()
-    .then((items) => items.map(({ id, statusName }) => ({
-      id,
-      name: statusName,
-    })));
+    .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
 
   app
     .get(
@@ -122,14 +119,7 @@ const labels = await app.objection.models.label.query();
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
           const statuses = await getStatusesForSelect();
-          const users = await app.objection.models.user
-            .query()
-            .then((items) => items.map(
-              ({ firstName, lastName, id }) => ({
-                id,
-                name: `${firstName} ${lastName}`,
-              }),
-            ));
+          const users = await getUsersForSelect();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
@@ -158,14 +148,7 @@ const labels = await app.objection.models.label.query();
           task.$set({ ...req.body.data, id: taskId });
 
           const statuses = await getStatusesForSelect();
-          const users = await app.objection.models.user
-            .query()
-            .then((items) => items.map(
-              ({ firstName, lastName, id }) => ({
-                id,
-                name: `${firstName} ${lastName}`,
-              }),
-            ));
+          const users = await getUsersForSelect();
 
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           reply.render('tasks/edit', {
