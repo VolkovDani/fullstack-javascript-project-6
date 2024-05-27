@@ -111,7 +111,7 @@ export default (app) => {
       { preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
-        task.$set(req.body.data);
+        task.$setJson(req.body.data);
         try {
           const creatorId = req.session.get('passport').id;
           const {
