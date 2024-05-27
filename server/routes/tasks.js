@@ -3,7 +3,8 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
-  const getStatusesForSelect = () => app.objection.models.status
+  const getStatusesForSelect = () => app.objection.models.status.query();
+  const getUsersForSelect = () => app.objection.models.user
     .query()
     .then((items) => items.map(({ id, statusName }) => ({
       id,
@@ -34,9 +35,7 @@ export default (app) => {
           .modify('findLabels', req.query.labelId);
 
         const statuses = await getStatusesForSelect();
-        const executors = await app.objection.models.user
-          .query()
-          .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
+        const executors = await getUsersForSelect();
         const labels = await app.objection.models.label.query();
         reply.render('tasks/index', {
           tasks, statuses, executors, labels,
@@ -50,15 +49,9 @@ export default (app) => {
       async (req, reply) => {
         const task = new app.objection.models.task();
         const statuses = await getStatusesForSelect();
-        const users = await app.objection.models.user
-          .query()
-          .then((items) => items.map(
-            ({ firstName, lastName, id }) => ({
-              id,
-              name: `${firstName} ${lastName}`,
-            }),
-          ));
-        reply.render('tasks/new', { task, users, statuses });
+        const users = await getUsersForSelect();
+const labels = await app.objection.models.label.query();
+        reply.render('tasks/new', { task, users, statuses, labels });
         return reply;
       },
     )
@@ -73,7 +66,8 @@ export default (app) => {
           .findOne({ 'task.id': taskId })
           .withGraphJoined('status')
           .withGraphJoined('creator')
-          .withGraphJoined('executor');
+          .withGraphJoined('executor')
+          .withGraphJoined('labels');
 
         reply.render('tasks/info', { task });
         return reply;
@@ -90,20 +84,15 @@ export default (app) => {
           .findOne({ 'task.id': taskId })
           .withGraphJoined('status')
           .withGraphJoined('creator')
-          .withGraphJoined('executor');
+          .withGraphJoined('executor')
+          .withGraphJoined('labels');
 
         const statuses = await getStatusesForSelect();
-        const users = await app.objection.models.user
-          .query()
-          .then((items) => items.map(
-            ({ firstName, lastName, id }) => ({
-              id,
-              name: `${firstName} ${lastName}`,
-            }),
-          ));
-
+        const users = await getUsersForSelect();
+        const labels = await app.objection.models.label
+          .query();
         reply.render('tasks/edit', {
-          id: taskId, task, statuses, users,
+          id: taskId, task, statuses, users, labels,
         });
         return reply;
       },
