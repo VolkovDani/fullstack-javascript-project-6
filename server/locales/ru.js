@@ -66,6 +66,12 @@ export default {
         },
       },
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
+      labels: {
+        create: {
+          success: 'Метка успешно создана',
+          error: 'Не удалось создать метку',
+        },
+      },
     },
     layouts: {
       application: {
@@ -75,6 +81,7 @@ export default {
         signUp: 'Регистрация',
         signOut: 'Выход',
         tasks: 'Задачи',
+        labels: 'Метки',
       },
     },
     mixins: {
@@ -94,6 +101,21 @@ export default {
       },
     },
     views: {
+      labels: {
+        index: 'Метки',
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+        actionButtons: {
+          create: 'Создать метку',
+          edit: 'Изменить',
+          delete: 'Удалить',
+        },
+        new: {
+          title: 'Создание метки',
+          submit: 'Создать',
+        },
+      },
       statuses: {
         index: 'Статусы',
         id: 'ID',
