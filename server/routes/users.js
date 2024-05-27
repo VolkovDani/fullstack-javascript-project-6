@@ -1,6 +1,7 @@
 // @ts-check
 
 import i18next from 'i18next';
+import _ from 'lodash';
 
 export default (app) => {
   app
@@ -99,10 +100,19 @@ export default (app) => {
           reply.redirect(app.reverse('users'));
           return reply;
         }
+        const task = await app.objection.models.task
+          .query()
+          .where({ creatorId: userId })
+          .orWhere({ executorId: userId });
+        if (!_.isEmpty(task)) {
+          req.flash('error', i18next.t('flash.users.delete.error'));
+          reply.redirect(app.reverse('users'));
+          return reply;
+        }
         try {
           await app.objection.models.user
             .query()
-            .findOne({ id: userId })
+            .findById(Number(userId))
             .delete();
           // выходим из сессии чтобы не создавать ошибку
           req.logOut();
