@@ -67,8 +67,6 @@ export default (app) => {
           .withGraphJoined('creator')
           .withGraphJoined('executor')
           .withGraphJoined('labels');
-        console.log(task);
-
         reply.render('tasks/info', { task });
         return reply;
       },
@@ -103,47 +101,32 @@ export default (app) => {
       async (req, reply) => {
         const task = new app.objection.models.task();
         req.body.data.creatorId = req.session.get('passport').id;
-        const { labels: reqLabels, ...rest } = req.body.data;
+        const { labels: labelIds, ...rest } = req.body.data;
         try {
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
-            const newTask = await app.objection.models.task.query(trx).insertAndFetch(validTask);
-
-            const labelsCorrect = new app.objection.models.labelsForTasks();
-            if (_.isArray(reqLabels)) {
-              const labels = reqLabels.map((id) => {
-                const labelForTasks = {
-                  labelId: Number(id),
-                  taskId: Number(newTask.id),
-                };
-                const labelCorrect = new app.objection.models.labelsForTasks();
-                labelCorrect.$set(labelForTasks);
-                return app.objection.models.labelsForTasks
-                  .query(trx).insert(labelCorrect);
-              });
-              const result = await Promise.all(labels);
-              return result;
-            }
-            const label = {
-              labelId: Number(reqLabels),
-              taskId: Number(newTask.id),
-            };
-            labelsCorrect.$set(label);
-            const result = await app.objection.models.labelsForTasks
-              .query(trx).insertAndFetch(labelsCorrect);
-            return result;
+            const labels = await app.objection.models.label
+              .query(trx)
+              .skipUndefined()
+              .findByIds(labelIds);
+            const newTask = await app.objection.models.task
+              .query(trx)
+              .upsertGraphAndFetch({
+                ...validTask, labels,
+              }, { relate: true, unrelate: true, noUpdate: ['labels'] });
+            return newTask;
           });
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
-          const labels = await app.objection.models.label.query();
+          const labelsSelect = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data, labels,
+            task, users, statuses, errors: data, labels: labelsSelect,
           });
         }
         return reply;
