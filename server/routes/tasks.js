@@ -47,8 +47,10 @@ export default (app) => {
         const task = new app.objection.models.task();
         const statuses = await getStatusesForSelect();
         const users = await getUsersForSelect();
-const labels = await app.objection.models.label.query();
-        reply.render('tasks/new', { task, users, statuses, labels });
+        const labels = await app.objection.models.label.query();
+        reply.render('tasks/new', {
+          task, users, statuses, labels,
+        });
         return reply;
       },
     )
@@ -102,7 +104,7 @@ const labels = await app.objection.models.label.query();
         req.body.data.creatorId = req.session.get('passport').id;
         const { labels: reqLabels, ...rest } = req.body.data;
         try {
-          task.$setJson(rest);
+          task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.query().insert(validTask);
           req.flash('info', i18next.t('flash.tasks.create.success'));
