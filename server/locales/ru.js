@@ -98,6 +98,7 @@ export default {
         statusId: 'Статус',
         executorId: 'Исполнитель',
         labelId: 'Метка',
+        labels: 'Метки',
       },
     },
     views: {
