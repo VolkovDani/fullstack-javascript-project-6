@@ -67,6 +67,7 @@ export default (app) => {
           .withGraphJoined('creator')
           .withGraphJoined('executor')
           .withGraphJoined('labels');
+        console.log(task);
 
         reply.render('tasks/info', { task });
         return reply;
@@ -106,7 +107,33 @@ export default (app) => {
         try {
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
-          await app.objection.models.task.query().insert(validTask);
+          await app.objection.models.task.transaction(async (trx) => {
+            const newTask = await app.objection.models.task.query(trx).insertAndFetch(validTask);
+
+            const labelsCorrect = new app.objection.models.labelsForTasks();
+            if (_.isArray(reqLabels)) {
+              const labels = reqLabels.map((id) => {
+                const labelForTasks = {
+                  labelId: Number(id),
+                  taskId: Number(newTask.id),
+                };
+                const labelCorrect = new app.objection.models.labelsForTasks();
+                labelCorrect.$set(labelForTasks);
+                return app.objection.models.labelsForTasks
+                  .query(trx).insert(labelCorrect);
+              });
+              const result = await Promise.all(labels);
+              return result;
+            }
+            const label = {
+              labelId: Number(reqLabels),
+              taskId: Number(newTask.id),
+            };
+            labelsCorrect.$set(label);
+            const result = await app.objection.models.labelsForTasks
+              .query(trx).insertAndFetch(labelsCorrect);
+            return result;
+          });
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
