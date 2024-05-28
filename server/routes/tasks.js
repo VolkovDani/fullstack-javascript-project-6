@@ -102,14 +102,22 @@ export default (app) => {
         const task = new app.objection.models.task();
         req.body.data.creatorId = req.session.get('passport').id;
         const { labels: labelIds, ...rest } = req.body.data;
+        console.log(' ------------------------------------ ');
+        console.log(req.body.data);
         try {
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
-            const labels = await app.objection.models.label
-              .query(trx)
-              .skipUndefined()
-              .findByIds(labelIds);
+            const labels = [];
+            if (labelIds) {
+              const convertedLabelIds = [...labelIds].map((item) => Number(item));
+              console.log('labelids', convertedLabelIds);
+              await app.objection.models.label
+                .query(trx)
+                .whereIn('id', [...convertedLabelIds])
+                .then((items) => labels.push(...items));
+            }
+            console.log(labels);
             const newTask = await app.objection.models.task
               .query(trx)
               .upsertGraphAndFetch({
@@ -119,14 +127,15 @@ export default (app) => {
           });
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
-        } catch ({ data }) {
+        } catch (data) {
+          console.log(data);
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
           const labelsSelect = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data, labels: labelsSelect,
+            task, users, statuses, errors: data.data, labels: labelsSelect,
           });
         }
         return reply;
