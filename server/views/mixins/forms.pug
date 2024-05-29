@@ -61,12 +61,12 @@ mixin inputSelect(entity, propertyName, errors = {}, object)
       each item in entity
         option(
           value= item.id
-          selected= (object[propertyName] === item.id) ? 'selected' : false 
+          selected= (String(object[propertyName]) === String(item.id)) ? 'selected' : false 
           )= item.name
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
-mixin inputSelectMultiple(entity, propertyName, errors = {}, object)
+mixin inputSelectMultipleLabels(entity, propertyName, errors = {}, object)
   - propertyErrors = _.get(errors, propertyName)
   - inputId = getInputId(propertyName)
   - classLine = 'form-select' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
@@ -81,7 +81,7 @@ mixin inputSelectMultiple(entity, propertyName, errors = {}, object)
       each item in entity
         option(
           value= item.id
-          selected= (object[propertyName] === item.id) ? 'selected' : false 
+          selected= (_.find(object[propertyName], { id: item.id })) ? 'selected' : false 
           )= item.name
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')

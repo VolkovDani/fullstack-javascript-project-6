@@ -16,6 +16,7 @@ import fastifyObjectionjs from 'fastify-objectionjs';
 import qs from 'qs';
 import Pug from 'pug';
 import i18next from 'i18next';
+import _ from 'lodash';
 
 import ru from './locales/ru.js';
 import en from './locales/en.js';
@@ -107,6 +108,27 @@ const registerPlugins = async (app) => {
     },
   // @ts-ignore
   )(...args));
+
+  app.decorate('getFilteredTasks', async (req) => {
+    const isCurrentUserTasks = () => {
+      if (!_.isEmpty(req.query.isCreatorUser)) {
+        const currentUser = req.session.get('passport').id;
+        return currentUser;
+      }
+      return null;
+    };
+
+    const tasks = await app.objection.models.task.query()
+      .withGraphJoined('status')
+      .withGraphJoined('creator')
+      .withGraphJoined('executor')
+      .withGraphJoined('labels')
+      .modify('findCreator', isCurrentUserTasks())
+      .modify('findStatus', req.query.statusId)
+      .modify('findExecutor', req.query.executorId)
+      .modify('findLabels', req.query.labelId);
+    return tasks;
+  });
 
   await app.register(fastifyMethodOverride);
   await app.register(fastifyObjectionjs, {

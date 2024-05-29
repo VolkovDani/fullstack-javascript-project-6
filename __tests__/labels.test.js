@@ -92,7 +92,7 @@ describe('test labels CRUD', () => {
   });
 
   it('edit', async () => {
-    const { edit, expected } = testData.labels;
+    const { expected } = testData.labels;
 
     const pageResponse = await app.inject({
       method: 'GET',
@@ -108,6 +108,10 @@ describe('test labels CRUD', () => {
     });
 
     expect(pageResponseWithSignIn.statusCode).toBe(200);
+  });
+
+  it('patch', async () => {
+    const { edit, expected } = testData.labels;
 
     const patchResponse = await app.inject({
       method: 'PATCH',
@@ -164,9 +168,8 @@ describe('test labels CRUD', () => {
     const task = await models.task
       .query()
       .withGraphJoined('labels')
-      .findById(1);
+      .findById(testData.tasks.new.id);
 
-    console.log(task);
     expect(task).toMatchObject({ ...testData.tasks.new });
     expect(task).toHaveProperty('labels', [{ id: 1, ...expected }]);
 
@@ -183,7 +186,7 @@ describe('test labels CRUD', () => {
 
     await app.inject({
       method: 'DELETE',
-      url: app.reverse('deleteTask', { id: expected.id }),
+      url: app.reverse('deleteTask', { id: testData.tasks.new.id }),
       cookies: getSessionCookieFromResponse(signInResponse),
     });
 

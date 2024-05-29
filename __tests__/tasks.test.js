@@ -3,7 +3,11 @@
 import fastify from 'fastify';
 
 import init from '../server/plugin.js';
-import { getSessionCookieFromResponse, getTestData, prepareData } from './helpers/index.js';
+import {
+  getSessionCookieFromResponse,
+  getTestData,
+  prepareData,
+} from './helpers/index.js';
 
 describe('test tasks CRUD', () => {
   let app;
@@ -28,14 +32,31 @@ describe('test tasks CRUD', () => {
     // и заполняем БД тестовыми данными
     await knex.migrate.latest();
     await prepareData(app);
-  });
-
-  beforeEach(async () => {
     signInResponse = await app.inject({
       method: 'POST',
       url: app.reverse('session'),
       payload: {
         data: testData.users.userForLogin,
+      },
+    });
+    const { newLabel } = testData.labels;
+    await app.inject({
+      method: 'POST',
+      url: app.reverse('labels'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: newLabel,
+      },
+    });
+
+    const { taskForFiltering } = testData.patches;
+    const { id, ...patchBody } = taskForFiltering;
+    await app.inject({
+      method: 'PATCH',
+      url: app.reverse('patchTask', { id: Number(id) }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: { ...patchBody },
       },
     });
   });
@@ -56,6 +77,20 @@ describe('test tasks CRUD', () => {
 
     expect(response.statusCode).toBe(200);
   });
+
+  test.each(testData.filtering.query)(
+    'filtering %#',
+    async (queryValues, taskId) => {
+      const response = await app.inject({
+        method: 'GET',
+        query: queryValues,
+        url: app.reverse('tasks'),
+        cookies: getSessionCookieFromResponse(signInResponse),
+      });
+      const regexp = new RegExp(`<td><a href="/tasks/[${taskId}]`, 'g');
+      expect(regexp.test(response.body)).toBe(true);
+    },
+  );
 
   it('new', async () => {
     const responseWithoutSignIn = await app.inject({
@@ -136,7 +171,7 @@ describe('test tasks CRUD', () => {
 
   it('patch', async () => {
     const { id, ...body } = testData.patches.task;
-    const wrondResponse = await app.inject({
+    const response = await app.inject({
       method: 'PATCH',
       url: app.reverse('patchTask', { id: Number(id) }),
       cookies: getSessionCookieFromResponse(signInResponse),
@@ -144,20 +179,12 @@ describe('test tasks CRUD', () => {
         data: body,
       },
     });
-    expect(wrondResponse.statusCode).toBe(302);
+    expect(response.statusCode).toBe(302);
 
     const patchedTask = testData.tasks.patched;
 
-    const updatedTask = await models.task.query().findOne({ id: 1 });
+    const updatedTask = await models.task.query().findOne({ id: testData.tasks.new.id });
     expect(updatedTask).toMatchObject(patchedTask);
-
-    const responseWithIndexPage = await app.inject({
-      method: 'GET',
-      url: app.reverse('tasks'),
-      cookies: getSessionCookieFromResponse(signInResponse),
-    });
-
-    expect(responseWithIndexPage.statusCode).toBe(200);
   });
 
   it('delete', async () => {
@@ -200,7 +227,7 @@ describe('test tasks CRUD', () => {
     expect(deleteResponseFromCreator.statusCode).toBe(302);
     await expect(models.task
       .query()
-      .findOne({ id: 1 })
+      .findOne({ id: taskForDeleting.id })
       .throwIfNotFound()).rejects.toThrowError('NotFoundError');
   });
 

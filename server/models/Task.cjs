@@ -9,21 +9,6 @@ module.exports = class Task extends BaseModel {
     return 'tasks';
   }
 
-  static modifiers = {
-    findCreator(query, creatorId) {
-      if (creatorId) query.where('creator.id', creatorId);
-    },
-    findStatus(query, statusId) {
-      if (statusId) query.where('status.id', statusId);
-    },
-    findExecutor(query, executorId) {
-      if (executorId) query.where('executor.id', executorId);
-    },
-    findLabels(query, labelsIds) {
-      if (labelsIds) query.where('labels.id', labelsIds);
-    },
-  };
-
   static get jsonSchema() {
     return {
       type: 'object',
@@ -38,6 +23,21 @@ module.exports = class Task extends BaseModel {
       },
     };
   }
+
+  static modifiers = {
+    findCreator(query, creatorId) {
+      if (creatorId) query.where('creator.id', creatorId);
+    },
+    findStatus(query, statusId) {
+      if (statusId) query.where('status.id', statusId);
+    },
+    findExecutor(query, executorId) {
+      if (executorId) query.where('executor.id', executorId);
+    },
+    findLabels(query, labelsIds) {
+      if (labelsIds) query.where('labels.id', labelsIds);
+    },
+  };
 
   $parseJson(json, opt) {
     const superJson = super.$parseJson(json, opt);

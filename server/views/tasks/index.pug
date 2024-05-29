@@ -45,7 +45,7 @@ block content
             td
               a(href=routeTo('taskPage', { id: task.id }))
                 = task.name
-            td= task.status.statusName
+            td= task.status.name
             td= `${task.creator.firstName} ${task.creator.lastName}`
             td= task.executor ? `${task.executor.firstName} ${task.executor.lastName}` : null
             td= formatDate(task.createdAt)

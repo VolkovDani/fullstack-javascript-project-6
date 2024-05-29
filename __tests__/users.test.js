@@ -171,11 +171,29 @@ describe('test users CRUD', () => {
   });
 
   it('delete', async () => {
-    const userData = testData.users.existing;
+    const { existing, taskIdForDeleting } = testData.users;
+
     // удаляем пользователя
     await app.inject({
       method: 'DELETE',
-      url: app.reverse('deleteUser', { id: Number(userData.id) }),
+      url: app.reverse('deleteUser', { id: Number(existing.id) }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    await expect(models.user
+      .query()
+      .findOne({ id: 2 })
+      .throwIfNotFound()).resolves.not.toThrowError('NotFoundError');
+
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteTask', { id: taskIdForDeleting.id }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id: Number(existing.id) }),
       cookies: getSessionCookieFromResponse(signInResponse),
     });
 

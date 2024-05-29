@@ -13,27 +13,12 @@ export default (app) => {
       '/tasks',
       { name: 'tasks', preValidation: app.authenticate },
       async (req, reply) => {
-        const isCurrentUserTasks = () => {
-          if (!_.isEmpty(req.query.isCreatorUser)) {
-            const currentUser = req.session.get('passport').id;
-            return currentUser;
-          }
-          return null;
-        };
-
-        const tasks = await app.objection.models.task.query()
-          .withGraphJoined('status')
-          .withGraphJoined('creator')
-          .withGraphJoined('executor')
-          .withGraphJoined('labels')
-          .modify('findCreator', isCurrentUserTasks())
-          .modify('findStatus', req.query.statusId)
-          .modify('findExecutor', req.query.executorId)
-          .modify('findLabels', req.query.labelId);
-
-        const statuses = await getStatusesForSelect();
-        const executors = await getUsersForSelect();
-        const labels = await app.objection.models.label.query();
+        const tasks = await app.getFilteredTasks(req);
+        const [statuses, executors, labels] = await Promise.all([
+          getStatusesForSelect(),
+          getUsersForSelect(),
+          app.objection.models.label.query(),
+        ]);
         reply.render('tasks/index', {
           tasks, statuses, executors, labels,
         });
@@ -146,7 +131,7 @@ export default (app) => {
           .query()
           .withGraphJoined('labels')
           .findById(taskId);
-        if (!_.findKey(req.body.data, 'labels')) req.body.data.labels = [];
+        if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
         const statuses = await getStatusesForSelect();
         const users = await getUsersForSelect();
         const labels = await app.objection.models.label.query();

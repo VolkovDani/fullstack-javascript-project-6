@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Lead Applications Developer",
+    "description": "Verecundia agnosco succedo deserunt.",
+    "statusId": 2,
+    "creatorId": 1,
+    "executorId": 1
+  },
+  {
+    "name": "Senior Interactions Coordinator",
+    "description": "Clibanus careo vesper repellendus.",
+    "statusId": 2,
+    "creatorId": 2,
+    "executorId": 0
+  },
+  {
+    "name": "Regional Configuration Analyst",
+    "description": "Stabilis defessus subito maiores.",
+    "statusId": 1,
+    "creatorId": 3,
+    "executorId": 1
+  }
+]
