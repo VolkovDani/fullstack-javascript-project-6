@@ -9,5 +9,5 @@ block content
     +inputTextarea(task, 'description', errors)
     +inputSelect(statuses, 'statusId', errors, task)
     +inputSelect(users, 'executorId', errors, task)
-    +inputSelectMultiple(labels, 'labels', errors, task)
+    +inputSelectMultipleLabels(labels, 'labels', errors, task)
     +submit(task)(value=t('views.tasks.submit'))
