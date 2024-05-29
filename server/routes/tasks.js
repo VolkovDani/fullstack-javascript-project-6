@@ -131,7 +131,7 @@ export default (app) => {
           .query()
           .withGraphJoined('labels')
           .findById(taskId);
-        if (!_.findKey(req.body.data, 'labels')) req.body.data.labels = [];
+        if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
         const statuses = await getStatusesForSelect();
         const users = await getUsersForSelect();
         const labels = await app.objection.models.label.query();
