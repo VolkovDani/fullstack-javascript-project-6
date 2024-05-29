@@ -87,7 +87,7 @@ describe('test tasks CRUD', () => {
         url: app.reverse('tasks'),
         cookies: getSessionCookieFromResponse(signInResponse),
       });
-      const regexp = new RegExp(`<td><a href="\/tasks\/[${taskId}]`, 'g');
+      const regexp = new RegExp(`<td><a href="/tasks/[${taskId}]`, 'g');
       expect(regexp.test(response.body)).toBe(true);
     },
   );

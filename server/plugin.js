@@ -16,6 +16,7 @@ import fastifyObjectionjs from 'fastify-objectionjs';
 import qs from 'qs';
 import Pug from 'pug';
 import i18next from 'i18next';
+import _ from 'lodash';
 
 import ru from './locales/ru.js';
 import en from './locales/en.js';
@@ -25,7 +26,6 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
-import _ from 'lodash';
 
 const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
