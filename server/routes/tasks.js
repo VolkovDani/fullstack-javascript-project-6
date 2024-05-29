@@ -102,8 +102,6 @@ export default (app) => {
         const task = new app.objection.models.task();
         req.body.data.creatorId = req.session.get('passport').id;
         const { labels: labelIds, ...rest } = req.body.data;
-        console.log(' ------------------------------------ ');
-        console.log(req.body.data);
         try {
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
@@ -111,31 +109,29 @@ export default (app) => {
             const labels = [];
             if (labelIds) {
               const convertedLabelIds = [...labelIds].map((item) => Number(item));
-              console.log('labelids', convertedLabelIds);
               await app.objection.models.label
                 .query(trx)
                 .whereIn('id', [...convertedLabelIds])
                 .then((items) => labels.push(...items));
             }
-            console.log(labels);
             const newTask = await app.objection.models.task
               .query(trx)
               .upsertGraphAndFetch({
                 ...validTask, labels,
               }, { relate: true, unrelate: true, noUpdate: ['labels'] });
+
             return newTask;
           });
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
-        } catch (data) {
-          console.log(data);
+        } catch ({ data }) {
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
           const labelsSelect = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data.data, labels: labelsSelect,
+            task, users, statuses, errors: data, labels: labelsSelect,
           });
         }
         return reply;
@@ -148,19 +144,67 @@ export default (app) => {
         const taskId = req.params.id;
         const patchedTask = await app.objection.models.task
           .query()
+          .withGraphJoined('labels')
           .findById(taskId);
+        if (!_.findKey(req.body.data, 'labels')) req.body.data.labels = [];
+        const statuses = await getStatusesForSelect();
+        const users = await getUsersForSelect();
+        const labels = await app.objection.models.label.query();
+        // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
+        const task = new app.objection.models.task();
+        const { labels: labelIds, ...rest } = req.body.data;
+        task.$set({ ...rest, id: taskId });
+
+        if (req.session.get('passport').id !== patchedTask.creatorId) {
+          req.flash('error', i18next.t('flash.tasks.patch.error'));
+          reply.render('tasks/edit', {
+            id: taskId,
+            task,
+            statuses,
+            users,
+            labels,
+          });
+          reply.statusCode = 422;
+          return reply;
+        }
         try {
-          await patchedTask.$query().patch(req.body.data);
+          await app.objection.models.task.transaction(async (trx) => {
+            await patchedTask.$query(trx).patch(rest);
+            await app.objection.models.labelsForTasks
+              .query(trx)
+              .where({ taskId })
+              .skipUndefined()
+              .whereNot('id', labelIds)
+              .delete();
+            if (_.isArray(labelIds)) {
+              const arrPromises = [...labelIds].map((item) => {
+                const obj = {
+                  labelId: Number(item),
+                  taskId: Number(taskId),
+                };
+                const labelsForTasksObj = new app.objection.models.labelsForTasks();
+                labelsForTasksObj.$set(obj);
+                return app.objection.models.labelsForTasks
+                  .query(trx)
+                  .insert(labelsForTasksObj);
+              });
+              await Promise.all(arrPromises);
+            } else {
+              const obj = {
+                labelId: Number(labelIds),
+                taskId: Number(taskId),
+              };
+              const labelsForTasksObj = new app.objection.models.labelsForTasks();
+              labelsForTasksObj.$set(obj);
+              await app.objection.models.labelsForTasks
+                .query(trx)
+                .insert(labelsForTasksObj);
+            }
+          });
           req.flash('info', i18next.t('flash.tasks.patch.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
           reply.statusCode = 422;
-          // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
-          const task = new app.objection.models.task();
-          task.$set({ ...req.body.data, id: taskId });
-
-          const statuses = await getStatusesForSelect();
-          const users = await getUsersForSelect();
 
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           reply.render('tasks/edit', {
@@ -169,6 +213,7 @@ export default (app) => {
             errors: data,
             statuses,
             users,
+            labels,
           });
         }
         return reply;
@@ -189,10 +234,22 @@ export default (app) => {
           return reply;
         }
         try {
-          await app.objection.models.task
-            .query()
-            .findById(taskId)
-            .delete();
+          await app.objection.models.task.transaction(async (trx) => {
+            await app.objection.models.task
+              .query(trx)
+              .findById(taskId)
+              .delete();
+            const result = await app.objection.models.labelsForTasks
+              .query(trx)
+              .delete()
+              .whereIn(
+                'taskId',
+                app.objection.models.labelsForTasks.query(trx)
+                  .select('labels_for_tasks.taskId')
+                  .where({ taskId }),
+              );
+            return result;
+          });
           req.flash('info', i18next.t('flash.tasks.delete.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {

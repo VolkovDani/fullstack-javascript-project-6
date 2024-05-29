@@ -135,14 +135,13 @@ describe('test tasks CRUD', () => {
   });
 
   it('patch', async () => {
-    const { id, patch } = testData.patches.task;
-    // Запрос с указанием только имени и фамилии
+    const { id, ...body } = testData.patches.task;
     const wrondResponse = await app.inject({
       method: 'PATCH',
       url: app.reverse('patchTask', { id: Number(id) }),
       cookies: getSessionCookieFromResponse(signInResponse),
       payload: {
-        data: patch,
+        data: body,
       },
     });
     expect(wrondResponse.statusCode).toBe(302);

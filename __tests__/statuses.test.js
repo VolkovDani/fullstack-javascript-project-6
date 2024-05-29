@@ -145,7 +145,6 @@ describe('test statuses CRUD', () => {
   it('delete', async () => {
     const { expected } = testData.statuses;
     const status = await models.status.query().findOne({ id: expected.id });
-
     expect(status).toMatchObject(expected);
     // удаляем пользователя
     await app.inject({

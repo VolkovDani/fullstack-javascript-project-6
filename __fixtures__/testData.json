@@ -31,6 +31,7 @@
   "patches": {
     "task": {
       "id": 1,
+      "name": "Some title",
       "statusId": 1,
       "executorId": 3
     },
@@ -67,11 +68,11 @@
     },
     "patched": {
       "id": 1,
-      "name": "Test task",
+      "name": "Some title",
       "description": "Some description",
       "statusId": 1,
       "creatorId": 2,
-      "executorId": 0
+      "executorId": 3
     },
     "newTask": {
       "name": "Test task",

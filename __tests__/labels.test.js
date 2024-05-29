@@ -5,7 +5,7 @@ import fastify from 'fastify';
 import init from '../server/plugin.js';
 import { getSessionCookieFromResponse, getTestData, prepareData } from './helpers/index.js';
 
-describe('test statuses CRUD', () => {
+describe('test labels CRUD', () => {
   let app;
   let knex;
   let models;
@@ -137,9 +137,56 @@ describe('test statuses CRUD', () => {
   it('delete', async () => {
     const { expected } = testData.labels;
     const label = await models.label.query().findOne({ id: expected.id });
-
     expect(label).toMatchObject(expected);
-    // удаляем пользователя
+
+    const { newStatus } = testData.statuses;
+
+    await app.inject({
+      method: 'POST',
+      url: app.reverse('statuses'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: newStatus,
+      },
+    });
+
+    const { newTask } = testData.tasks;
+
+    await app.inject({
+      method: 'POST',
+      url: app.reverse('tasks'),
+      cookies: getSessionCookieFromResponse(signInResponse),
+      payload: {
+        data: { ...newTask, labels: [1] },
+      },
+    });
+
+    const task = await models.task
+      .query()
+      .withGraphJoined('labels')
+      .findById(1);
+
+    console.log(task);
+    expect(task).toMatchObject({ ...testData.tasks.new });
+    expect(task).toHaveProperty('labels', [{ id: 1, ...expected }]);
+
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteLabel', { id: expected.id }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
+    await expect(models.label
+      .query()
+      .findOne({ id: expected.id })
+      .throwIfNotFound()).resolves.not.toThrowError('NotFoundError');
+
+    await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteTask', { id: expected.id }),
+      cookies: getSessionCookieFromResponse(signInResponse),
+    });
+
     await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteLabel', { id: expected.id }),

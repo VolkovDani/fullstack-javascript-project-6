@@ -1,6 +1,7 @@
 // @ts-check
 
 import i18next from 'i18next';
+import _ from 'lodash';
 
 export default (app) => {
   app
@@ -79,6 +80,14 @@ export default (app) => {
       { name: 'deleteStatus', preValidation: app.authenticate },
       async (req, reply) => {
         const statusId = req.params.id;
+        const relatedTask = await app.objection.models.task
+          .query()
+          .where({ statusId });
+        if (!_.isEmpty(relatedTask)) {
+          req.flash('error', i18next.t('flash.statuses.delete.error'));
+          reply.redirect(app.reverse('statuses'));
+          return reply;
+        }
         try {
           await app.objection.models.status
             .query()

@@ -1,6 +1,7 @@
 // @ts-check
 
 import i18next from 'i18next';
+import _ from 'lodash';
 
 export default (app) => {
   app
@@ -82,10 +83,14 @@ export default (app) => {
         const labels = await app.objection.models.label
           .query();
         try {
-          console.log('delete --------------------------------- ');
-          const relationsWithTasks = await app.objection.models.labels_for_tasks
-            .query();
-          console.log(relationsWithTasks);
+          const relationsWithTasks = await app.objection.models.labelsForTasks
+            .query()
+            .where({ labelId });
+          if (!_.isEmpty(relationsWithTasks)) {
+            req.flash('error', i18next.t('flash.labels.delete.error'));
+            reply.render('labels/index', { labels });
+            return reply;
+          }
           await app.objection.models.label
             .query()
             .findById(labelId)
