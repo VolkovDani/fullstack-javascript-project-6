@@ -1,5 +1,6 @@
 {
   "users": {
+    "taskIdForDeleting": { "id": 2 },
     "new": {
       "email": "malika_hodkiewicz75@live.com",
       "password": "RLJvaIgPOnX5r03",
@@ -12,7 +13,7 @@
       "password": "O6AvLIQL1cbzrre",
       "firstName": "Carmen",
       "lastName": "Larkin"
-      },
+    },
     "userForLogin": {
       "email": "lawrence.kulas87@outlook.com",
       "password": "O6AvLIQL1cbzrre"
@@ -26,24 +27,6 @@
     "userForSecondLogin": {
       "email": "malika_hodkiewicz75@live.com",
       "password": "RLJvaIgPOnX5r03"
-    }
-  },
-  "patches": {
-    "task": {
-      "id": 1,
-      "name": "Some title",
-      "statusId": 1,
-      "executorId": 3
-    },
-    "UserNames": {
-      "firstName": "Carmenia",
-      "lastName": "Larking"
-    },
-    "correctPatchData": {
-      "email": "lawrence.kulas87@outlook.com",
-      "password": "O6AvLIQL1cbzrre",
-      "firstName": "Carmenia",
-      "lastName": "Larking"
     }
   },
   "statuses": {
@@ -64,10 +47,10 @@
   },
   "tasks": {
     "delete": {
-      "id": 1
+      "id": 4
     },
     "patched": {
-      "id": 1,
+      "id": 4,
       "name": "Some title",
       "description": "Some description",
       "statusId": 1,
@@ -81,7 +64,7 @@
       "statusId": 1
     },
     "new": {
-      "id": 1,
+      "id": 4,
       "name": "Test task",
       "description": "Some description",
       "executorId": 0,
@@ -91,11 +74,11 @@
   },
   "labels": {
     "newLabel": {
-      "name":"Test label"
+      "name": "Test label"
     },
     "new": {
       "id": 1,
-      "name":"Test label"
+      "name": "Test label"
     },
     "edit": {
       "name": "Edit label"
@@ -103,6 +86,62 @@
     "expected": {
       "id": 1,
       "name": "Edit label"
+    }
+  },
+  "filtering": {
+    "query": [
+      [
+        {
+          "statusId": 2,
+          "executorId": "",
+          "labelId": "",
+          "isCreatorUser": "on"
+        },
+        [2]
+      ],
+      [
+        {
+          "statusId": 1,
+          "executorId": 1,
+          "labelId": "",
+          "isCreatorUser": ""
+        },
+        [3]
+      ],
+      [
+        {
+          "statusId": "",
+          "executorId": "",
+          "labelId": 1,
+          "isCreatorUser": ""
+        },
+        [2]
+      ]
+    ]
+  },
+  "patches": {
+    "task": {
+      "id": 4,
+      "name": "Some title",
+      "statusId": 1,
+      "executorId": 3
+    },
+    "taskForFiltering": {
+      "id": 2,
+      "name": "Senior Interactions Coordinator",
+      "statusId": 2,
+      "executorId": 2,
+      "labels": 1
+    },
+    "UserNames": {
+      "firstName": "Carmenia",
+      "lastName": "Larking"
+    },
+    "correctPatchData": {
+      "email": "lawrence.kulas87@outlook.com",
+      "password": "O6AvLIQL1cbzrre",
+      "firstName": "Carmenia",
+      "lastName": "Larking"
     }
   }
 }
