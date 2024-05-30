@@ -127,7 +127,7 @@ const registerPlugins = async (app) => {
       .modify('findCreator', isCurrentUserTasks())
       .modify('findStatus', req.query.status)
       .modify('findExecutor', req.query.executor)
-      .modify('findLabels', req.query.labels);
+      .modify('findLabels', req.query.label);
     return tasks;
   });
 

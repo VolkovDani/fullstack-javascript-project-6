@@ -62,6 +62,7 @@ module.exports = class Task extends BaseModel {
       executor: () => 'executorId',
       executorId: () => 'executorId',
       labels: () => 'labels',
+      label: () => 'labels',
     };
     const convertedJson = Object.entries(superJson)
       .reduce((acc, [key, value]) => (
