@@ -32,7 +32,7 @@ module.exports = class User extends unique(BaseModel) {
         modelClass: 'Tasks.cjs',
         join: {
           from: 'users.id',
-          to: 'tasks.cretorId',
+          to: 'tasks.creatorId',
         },
       },
     };

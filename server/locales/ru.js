@@ -193,6 +193,7 @@ export default {
           edit: 'Изменить',
           delete: 'Удалить',
         },
+        index: 'Пользователи',
         id: 'ID',
         fullName: 'Полное имя',
         email: 'Email',

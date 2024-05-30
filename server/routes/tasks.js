@@ -48,9 +48,9 @@ export default (app) => {
           .query()
           .alias('task')
           .findOne({ 'task.id': taskId })
-          .withGraphJoined('status')
-          .withGraphJoined('creator')
-          .withGraphJoined('executor')
+          .withGraphJoined('statuses')
+          .withGraphJoined('creators')
+          .withGraphJoined('executors')
           .withGraphJoined('labels');
         reply.render('tasks/info', { task });
         return reply;
@@ -65,9 +65,9 @@ export default (app) => {
           .query()
           .alias('task')
           .findOne({ 'task.id': taskId })
-          .withGraphJoined('status')
-          .withGraphJoined('creator')
-          .withGraphJoined('executor')
+          .withGraphJoined('statuses')
+          .withGraphJoined('creators')
+          .withGraphJoined('executors')
           .withGraphJoined('labels');
 
         const statuses = await getStatusesForSelect();
@@ -75,7 +75,7 @@ export default (app) => {
         const labels = await app.objection.models.label
           .query();
         reply.render('tasks/edit', {
-          id: taskId, task, statuses, users, labels,
+          id: task, task, statuses, users, labels,
         });
         return reply;
       },
@@ -85,7 +85,7 @@ export default (app) => {
       { preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
-        req.body.data.creatorId = req.session.get('passport').id;
+        req.body.data.creator = req.session.get('passport').id;
         const { labels: labelIds, ...rest } = req.body.data;
         try {
           task.$set(rest);
@@ -153,7 +153,7 @@ export default (app) => {
               const arrPromises = [...labelIds].map((item) => {
                 const obj = {
                   labelId: Number(item),
-                  taskId: Number(taskId),
+                  taskId: Number(task),
                 };
                 const labelsForTasksObj = new app.objection.models.labelsForTasks();
                 labelsForTasksObj.$set(obj);
@@ -165,7 +165,7 @@ export default (app) => {
             } else {
               const obj = {
                 labelId: Number(labelIds),
-                taskId: Number(taskId),
+                taskId: Number(task),
               };
               const labelsForTasksObj = new app.objection.models.labelsForTasks();
               labelsForTasksObj.$set(obj);

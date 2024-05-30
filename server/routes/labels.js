@@ -79,13 +79,13 @@ export default (app) => {
       '/labels/:id',
       { name: 'deleteLabel', preValidation: app.authenticate },
       async (req, reply) => {
-        const labelId = req.params.id;
+        const label = req.params.id;
         const labels = await app.objection.models.label
           .query();
         try {
           const relationsWithTasks = await app.objection.models.labelsForTasks
             .query()
-            .where({ labelId });
+            .where({ labelId: label });
           if (!_.isEmpty(relationsWithTasks)) {
             req.flash('error', i18next.t('flash.labels.delete.error'));
             reply.render('labels/index', { labels });
@@ -93,7 +93,7 @@ export default (app) => {
           }
           await app.objection.models.label
             .query()
-            .findById(labelId)
+            .findById(label)
             .delete();
           req.flash('info', i18next.t('flash.labels.delete.success'));
           reply.redirect(app.reverse('labels'));

@@ -120,9 +120,9 @@ const registerPlugins = async (app) => {
     };
 
     const tasks = await app.objection.models.task.query()
-      .withGraphJoined('status')
-      .withGraphJoined('creator')
-      .withGraphJoined('executor')
+      .withGraphJoined('statuses')
+      .withGraphJoined('creators')
+      .withGraphJoined('executors')
       .withGraphJoined('labels')
       .modify('findCreator', isCurrentUserTasks())
       .modify('findStatus', req.query.status)

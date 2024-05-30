@@ -79,10 +79,10 @@ export default (app) => {
       '/statuses/:id',
       { name: 'deleteStatus', preValidation: app.authenticate },
       async (req, reply) => {
-        const statusId = req.params.id;
+        const status = req.params.id;
         const relatedTask = await app.objection.models.task
           .query()
-          .where({ statusId });
+          .where({ statusId: status });
         if (!_.isEmpty(relatedTask)) {
           req.flash('error', i18next.t('flash.statuses.delete.error'));
           reply.redirect(app.reverse('statuses'));
@@ -91,7 +91,7 @@ export default (app) => {
         try {
           await app.objection.models.status
             .query()
-            .findById(statusId)
+            .findById(status)
             .delete();
           req.flash('info', i18next.t('flash.statuses.delete.success'));
           reply.redirect(app.reverse('statuses'));

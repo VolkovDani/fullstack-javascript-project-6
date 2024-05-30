@@ -198,7 +198,7 @@ describe('test labels CRUD', () => {
 
     await expect(models.label
       .query()
-      .findOne({ id: expected.id })
+      .findById(expected.id)
       .throwIfNotFound()).rejects.toThrowError('NotFoundError');
   });
 

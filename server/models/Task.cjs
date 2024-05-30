@@ -26,13 +26,13 @@ module.exports = class Task extends BaseModel {
 
   static modifiers = {
     findCreator(query, creatorId) {
-      if (creatorId) query.where('creator.id', creatorId);
+      if (creatorId) query.where('creators.id', creatorId);
     },
     findStatus(query, statusId) {
-      if (statusId) query.where('status.id', statusId);
+      if (statusId) query.where('statuses.id', statusId);
     },
     findExecutor(query, executorId) {
-      if (executorId) query.where('executor.id', executorId);
+      if (executorId) query.where('executors.id', executorId);
     },
     findLabels(query, labelsIds) {
       if (labelsIds) query.where('labels.id', labelsIds);
@@ -44,19 +44,34 @@ module.exports = class Task extends BaseModel {
     const dict = {
       name: (name) => name,
       description: (description) => description,
-      statusId: (statusId) => Number(statusId),
-      creatorId: (creatorId) => Number(creatorId),
-      executorId: (executorId) => Number(executorId),
+      status: (status) => Number(status),
+      statusId: (status) => Number(status),
+      creator: (creator) => Number(creator),
+      creatorId: (creator) => Number(creator),
+      executor: (executor) => Number(executor),
+      executorId: (executor) => Number(executor),
       labels: (labels) => labels,
     };
+    const getTaskAttributeFromName = {
+      name: () => 'name',
+      description: () => 'description',
+      status: () => 'statusId',
+      statusId: () => 'statusId',
+      creator: () => 'creatorId',
+      creatorId: () => 'creatorId',
+      executor: () => 'executorId',
+      executorId: () => 'executorId',
+      labels: () => 'labels',
+    };
     const convertedJson = Object.entries(superJson)
-      .reduce((acc, [key, value]) => ({ ...acc, [key]: dict[key](value) }), {});
+      .reduce((acc, [key, value]) => (
+        { ...acc, [getTaskAttributeFromName[key]()]: dict[key](value) }), {});
     return convertedJson;
   }
 
   static get relationMappings() {
     return {
-      status: {
+      statuses: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'Status.cjs',
         join: {
@@ -64,7 +79,7 @@ module.exports = class Task extends BaseModel {
           to: 'statuses.id',
         },
       },
-      creator: {
+      creators: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'User.cjs',
         join: {
@@ -72,7 +87,7 @@ module.exports = class Task extends BaseModel {
           to: 'users.id',
         },
       },
-      executor: {
+      executors: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'User.cjs',
         join: {
