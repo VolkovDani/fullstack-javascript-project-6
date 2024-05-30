@@ -26,7 +26,7 @@ block content
             name="isCreatorUser"
           )
           label.form-check-label(for="data_isCreatorUser")= t('views.tasks.actionButtons.checkMyTasks')
-        +submit()
+        +submit()(value=t('views.tasks.actionButtons.filter'))
   .table-responsive
     table.table.table-striped.mt-5
       thead

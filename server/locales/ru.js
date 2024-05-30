@@ -172,6 +172,7 @@ export default {
           delete: 'Удалить',
           checkMyTasks: 'Только мои задачи',
           create: 'Создать задачу',
+          filter: 'Показать',
         },
         submit: 'Создать',
       },
