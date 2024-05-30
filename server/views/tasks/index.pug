@@ -12,13 +12,13 @@ block content
         .row
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(statuses, 'statusId')
+              +inputSelectFilter(statuses, 'status')
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(executors, 'executorId')
+              +inputSelectFilter(executors, 'executor')
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(labels, 'labelId')
+              +inputSelectFilter(labels, 'label')
         .mb-3.form-switch
           input.form-check-input(
             id="data_isCreatorUser"

@@ -125,9 +125,9 @@ const registerPlugins = async (app) => {
       .withGraphJoined('executor')
       .withGraphJoined('labels')
       .modify('findCreator', isCurrentUserTasks())
-      .modify('findStatus', req.query.statusId)
-      .modify('findExecutor', req.query.executorId)
-      .modify('findLabels', req.query.labelId);
+      .modify('findStatus', req.query.status)
+      .modify('findExecutor', req.query.executor)
+      .modify('findLabels', req.query.label);
     return tasks;
   });
 
