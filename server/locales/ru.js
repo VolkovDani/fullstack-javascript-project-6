@@ -103,8 +103,8 @@ export default {
         description: 'Описание',
       },
       labels: {
-        status: 'Статус',
-        executor: 'Исполнитель',
+        statusId: 'Статус',
+        executorId: 'Исполнитель',
         label: 'Метка',
         labels: 'Метки',
       },
