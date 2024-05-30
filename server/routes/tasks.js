@@ -86,7 +86,7 @@ export default (app) => {
       async (req, reply) => {
         const task = new app.objection.models.task();
         req.body.data.creator = req.session.get('passport').id;
-        const { label: labelIds, ...rest } = req.body.data;
+        const { labels: labelIds, ...rest } = req.body.data;
         try {
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
