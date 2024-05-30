@@ -143,9 +143,9 @@ export default (app) => {
           executor: executorId,
           ...restProps
         } = rest;
-        task.$set({ ...restProps, statusId, executorId, id: taskId });
-        console.log(task);
-        console.log(rest);
+        task.$set({
+          ...restProps, statusId, executorId, id: taskId,
+        });
 
         try {
           await app.objection.models.task.transaction(async (trx) => {
@@ -185,7 +185,6 @@ export default (app) => {
           reply.redirect(app.reverse('tasks'));
         } catch (data) {
           reply.statusCode = 422;
-          console.log(data);
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           reply.render('tasks/edit', {
             id: taskId,
