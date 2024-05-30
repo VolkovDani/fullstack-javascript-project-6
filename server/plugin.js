@@ -151,26 +151,6 @@ const registerPlugins = async (app) => {
     rollbar.error(error, request);
     done();
   });
-  // await app.setNotFoundHandler({
-  //   preValidation: (req, reply, done) => {
-  //     rollbar.error('Page Not Found', req);
-  //     done();
-  //   },
-  // });
-
-  // await app.setErrorHandler(function errorHandler(error, req, reply) {
-  //   this.log.error(error);
-  //   rollbar.error(error, req);
-  // });
-
-  // await app.register((app, options, next) => {
-  //   rollbar.log('hello');
-  //   app.setErrorHandler((error, req, reply) => {
-  //     rollbar.error(error, req);
-  //     // throw error;
-  //   });
-  //   next();
-  // });
 };
 
 export const options = {

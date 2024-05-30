@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "0.0.1",
   "description": "[![Actions Status](https://github.com/VolkovDani/fullstack-javascript-project-6/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/VolkovDani/fullstack-javascript-project-6/actions)",
-  "main": "knexfile.js",
+  "main": "server/plugin.js",
   "engines": {
     "node": ">=16.x"
   },
