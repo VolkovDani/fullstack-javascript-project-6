@@ -138,7 +138,14 @@ export default (app) => {
         // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
         const task = new app.objection.models.task();
         const { labels: labelIds, ...rest } = req.body.data;
-        task.$set({ ...rest, id: taskId });
+        const {
+          status: statusId,
+          executor: executorId,
+          ...restProps
+        } = rest;
+        task.$set({ ...restProps, statusId, executorId, id: taskId });
+        console.log(task);
+        console.log(rest);
 
         try {
           await app.objection.models.task.transaction(async (trx) => {
@@ -153,7 +160,7 @@ export default (app) => {
               const arrPromises = [...labelIds].map((item) => {
                 const obj = {
                   labelId: Number(item),
-                  taskId: Number(task),
+                  taskId: Number(task.id),
                 };
                 const labelsForTasksObj = new app.objection.models.labelsForTasks();
                 labelsForTasksObj.$set(obj);
@@ -165,7 +172,7 @@ export default (app) => {
             } else {
               const obj = {
                 labelId: Number(labelIds),
-                taskId: Number(task),
+                taskId: Number(taskId),
               };
               const labelsForTasksObj = new app.objection.models.labelsForTasks();
               labelsForTasksObj.$set(obj);
@@ -176,14 +183,14 @@ export default (app) => {
           });
           req.flash('info', i18next.t('flash.tasks.patch.success'));
           reply.redirect(app.reverse('tasks'));
-        } catch ({ data }) {
+        } catch (data) {
           reply.statusCode = 422;
-
+          console.log(data);
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           reply.render('tasks/edit', {
             id: taskId,
             task,
-            errors: data,
+            errors: data.data,
             statuses,
             users,
             labels,

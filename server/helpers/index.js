@@ -32,4 +32,14 @@ export default (app) => ({
     const date = new Date(str);
     return date.toLocaleString();
   },
+  convertPropertyName(property) {
+    console.log(property);
+    console.log('---------------------------------------------------');
+    const dict = {
+      status: 'statusId',
+      executor: 'executorId',
+      labels: 'labels',
+    };
+    return dict[property];
+  },
 });
