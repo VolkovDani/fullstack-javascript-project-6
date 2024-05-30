@@ -33,8 +33,6 @@ export default (app) => ({
     return date.toLocaleString();
   },
   convertPropertyName(property) {
-    console.log(property);
-    console.log('---------------------------------------------------');
     const dict = {
       status: 'statusId',
       executor: 'executorId',
