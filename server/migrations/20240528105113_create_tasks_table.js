@@ -9,17 +9,17 @@ export const up = (knex) => (
     table.integer('status_id')
       .references('id')
       .inTable('statuses')
-      .onDelete('RESTRICT')
+      .onDelete('RESTRICT');
 
     table.integer('creator_id')
       .references('id')
       .inTable('users')
-      .onDelete('RESTRICT')
+      .onDelete('RESTRICT');
 
     table.integer('executor_id')
       .references('id')
       .inTable('users')
-      .onDelete('SET NULL')
+      .onDelete('SET NULL');
 
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
