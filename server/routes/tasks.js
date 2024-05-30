@@ -140,18 +140,6 @@ export default (app) => {
         const { labels: labelIds, ...rest } = req.body.data;
         task.$set({ ...rest, id: taskId });
 
-        if (req.session.get('passport').id !== patchedTask.creatorId) {
-          req.flash('error', i18next.t('flash.tasks.patch.error'));
-          reply.render('tasks/edit', {
-            id: taskId,
-            task,
-            statuses,
-            users,
-            labels,
-          });
-          reply.statusCode = 422;
-          return reply;
-        }
         try {
           await app.objection.models.task.transaction(async (trx) => {
             await patchedTask.$query(trx).patch(rest);
