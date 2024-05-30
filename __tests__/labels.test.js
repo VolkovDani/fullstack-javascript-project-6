@@ -171,7 +171,7 @@ describe('test labels CRUD', () => {
       .findById(testData.tasks.new.id);
 
     expect(task).toMatchObject({ ...testData.tasks.new });
-    expect(task).toHaveProperty('labels', [{ id: 1, ...expected }]);
+    expect(task).toMatchObject({ labels: [{ id: 1, ...expected }] });
 
     await app.inject({
       method: 'DELETE',
