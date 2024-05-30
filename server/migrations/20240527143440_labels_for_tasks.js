@@ -3,8 +3,8 @@
 export const up = (knex) => (
   knex.schema.createTable('labels_for_tasks', (table) => {
     table.increments('id').primary();
-    table.integer('label_id').references('id').inTable('labels').onDelete('CASCADE');
-    table.integer('task_id').references('id').inTable('tasks').onDelete('CASCADE');
+    table.integer('label_id');
+    table.integer('task_id');
   })
 );
 
