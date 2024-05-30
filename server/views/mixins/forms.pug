@@ -38,13 +38,16 @@ mixin inputTextarea(entity, propertyName, errors = {})
     )= _.get(entity, propertyName, '')
     if !_.isEmpty(propertyErrors)
           .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
-mixin inputSelectFilter(entity, propertyName)
+mixin inputSelectFilter(entity, propertyName, selected)
   - inputId = getInputId(propertyName)
     label.input-group-text(for= inputId)= t(`mixins.labels.${propertyName}`)
     select.form-select(id= inputId name= propertyName)
       option
       each item in entity
-        option(value= item.id)= item.name
+        option(
+          value= item.id
+          selected= (Number(selected[propertyName]) === item.id ? 'selected' : null)
+          )= item.name
 
 mixin inputSelect(entity, propertyName, errors = {}, object)
   - propertyErrors = _.get(errors, propertyName)
