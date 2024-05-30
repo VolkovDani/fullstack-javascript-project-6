@@ -61,7 +61,7 @@ mixin inputSelect(entity, propertyName, errors = {}, object)
       each item in entity
         option(
           value= item.id
-          selected= (String(object[propertyName]) === String(item.id)) ? 'selected' : false 
+          selected= (object[convertPropertyName(propertyName)] === item.id) ? 'selected' : false 
           )= item.name
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
