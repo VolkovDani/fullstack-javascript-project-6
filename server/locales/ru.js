@@ -4,6 +4,7 @@ export default {
   translation: {
     appName: 'Менеджер задач',
     flash: {
+      authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
       tasks: {
         patch: {
           success: 'Задача успешно изменена',
@@ -65,7 +66,6 @@ export default {
           error: 'Не удалось удалить статус',
         },
       },
-      authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
       labels: {
         delete: {
           success: 'Метка успешно удалена',
@@ -74,6 +74,10 @@ export default {
         create: {
           success: 'Метка успешно создана',
           error: 'Не удалось создать метку',
+        },
+        patch: {
+          success: 'Метка успешно изменена',
+          error: 'Не удалось изменить метку',
         },
       },
     },
@@ -115,6 +119,10 @@ export default {
           create: 'Создать метку',
           edit: 'Изменить',
           delete: 'Удалить',
+        },
+        edit: {
+          title: 'Изменение метки',
+          submit: 'Изменить',
         },
         new: {
           title: 'Создание метки',
