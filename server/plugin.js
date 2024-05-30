@@ -148,7 +148,6 @@ const registerPlugins = async (app) => {
   });
 
   await app.addHook('onError', (request, reply, error, done) => {
-    console.log('------------------- ');
     rollbar.error(error, request);
     done();
   });
