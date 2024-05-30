@@ -17,6 +17,7 @@ import qs from 'qs';
 import Pug from 'pug';
 import i18next from 'i18next';
 import _ from 'lodash';
+import Rollbar from 'rollbar';
 
 import ru from './locales/ru.js';
 import en from './locales/en.js';
@@ -135,6 +136,42 @@ const registerPlugins = async (app) => {
     knexConfig: knexConfig[mode],
     models,
   });
+
+  // include and initialize the rollbar library with your access token
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_API_KEY,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+    payload: {
+      code_version: '1.0.0',
+    },
+  });
+
+  await app.addHook('onError', (request, reply, error, done) => {
+    console.log('------------------- ');
+    rollbar.error(error, request);
+    done();
+  });
+  // await app.setNotFoundHandler({
+  //   preValidation: (req, reply, done) => {
+  //     rollbar.error('Page Not Found', req);
+  //     done();
+  //   },
+  // });
+
+  // await app.setErrorHandler(function errorHandler(error, req, reply) {
+  //   this.log.error(error);
+  //   rollbar.error(error, req);
+  // });
+
+  // await app.register((app, options, next) => {
+  //   rollbar.log('hello');
+  //   app.setErrorHandler((error, req, reply) => {
+  //     rollbar.error(error, req);
+  //     // throw error;
+  //   });
+  //   next();
+  // });
 };
 
 export const options = {
