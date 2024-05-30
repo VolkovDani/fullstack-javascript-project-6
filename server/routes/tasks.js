@@ -19,8 +19,6 @@ export default (app) => {
           getUsersForSelect(),
           app.objection.models.label.query(),
         ]);
-        console.log('---------------------------------------');
-        console.log({...req.query});
         reply.render('tasks/index', {
           tasks, statuses, executors, labels, selected: { ...req.query },
         });
