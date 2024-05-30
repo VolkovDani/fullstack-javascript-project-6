@@ -182,16 +182,22 @@ export default {
         },
       },
       users: {
-        edit: 'Изменение пользователя',
+        edit: {
+          title: 'Изменение пользователя',
+          actionButtons: {
+            submit: 'Изменить',
+            delete: 'Удалить',
+          },
+        },
+        actionButtons: {
+          edit: 'Изменить',
+          delete: 'Удалить',
+        },
         id: 'ID',
         fullName: 'Полное имя',
         email: 'Email',
         createdAt: 'Дата создания',
         actions: 'Действия',
-        actionButtons: {
-          edit: 'Изменить',
-          delete: 'Удалить',
-        },
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
