@@ -149,13 +149,14 @@ export default (app) => {
           });
           await app.objection.models.task.transaction(async (trx) => {
             await patchedTask.$query(trx).patch(rest);
-            await app.objection.models.labelsForTasks
-              .query(trx)
-              .where({ taskId })
-              .skipUndefined()
-              .whereNot('id', labelIds)
-              .delete();
             if (!_.isEmpty(labelIds)) {
+              await app.objection.models.labelsForTasks
+                .query(trx)
+                .where({ taskId })
+                .skipUndefined()
+                .whereNot('id', labelIds)
+                .delete();
+
               if (_.isArray(labelIds)) {
                 const arrPromises = [...labelIds].map((item) => {
                   const obj = {
@@ -180,6 +181,12 @@ export default (app) => {
                   .query(trx)
                   .insert(labelsForTasksObj);
               }
+            } else {
+              await app.objection.models.labelsForTasks
+                .query(trx)
+                .where({ taskId })
+                .skipUndefined()
+                .delete();
             }
           });
           req.flash('info', i18next.t('flash.tasks.patch.success'));
