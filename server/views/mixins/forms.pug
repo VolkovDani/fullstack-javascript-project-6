@@ -17,6 +17,7 @@ mixin input(entity, propertyName, errors = {})
       id= inputId
       name=getInputName(propertyName)
       class=classLine
+      maxlength='100'
       value=_.get(entity, propertyName, '')
     )&attributes(attributes)
     if !_.isEmpty(propertyErrors)
@@ -34,6 +35,7 @@ mixin inputTextarea(entity, propertyName, errors = {})
       id= inputId
       name=getInputName(propertyName)
       class=classLine
+      maxlength='255'
       rows="3"
     )= _.get(entity, propertyName, '')
     if !_.isEmpty(propertyErrors)
