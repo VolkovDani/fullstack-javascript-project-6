@@ -6,5 +6,5 @@ block header
 block content
   +formFor(label)(action=routeTo('patchLabel', { id: Number(label.id) }) method='post')
     +input(label, 'name', errors)(type="text")
-    input(name="_method" value='patch' type='hidden')
+    input(name="_method" value='patch' type='hidden' maxlength='50')
     +submit(label)(value=t('views.labels.edit.submit'))
