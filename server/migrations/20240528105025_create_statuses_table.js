@@ -1,7 +1,7 @@
 // @ts-check
 
 export const up = (knex) => (
-  knex.schema.createTable('labels', (table) => {
+  knex.schema.createTable('statuses', (table) => {
     table.increments('id').primary();
     table.string('name', 50).unique();
     table.timestamp('created_at').defaultTo(knex.fn.now());
@@ -9,4 +9,4 @@ export const up = (knex) => (
   })
 );
 
-export const down = (knex) => knex.schema.dropTable('labels');
+export const down = (knex) => knex.schema.dropTable('statuses');

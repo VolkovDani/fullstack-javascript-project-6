@@ -128,7 +128,6 @@ const registerPlugins = async (app) => {
       .modify('findStatus', req.query.status)
       .modify('findExecutor', req.query.executor)
       .modify('findLabels', req.query.label);
-    console.log(tasks);
     return tasks;
   });
 
