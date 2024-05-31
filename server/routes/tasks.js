@@ -171,6 +171,12 @@ export default (app) => {
                 });
                 await Promise.all(arrPromises);
               } else {
+                await app.objection.models.labelsForTasks
+                  .query(trx)
+                  .where({ taskId })
+                  .skipUndefined()
+                  .delete();
+
                 const obj = {
                   labelId: Number(labelIds),
                   taskId: Number(taskId),
