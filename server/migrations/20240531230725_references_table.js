@@ -18,12 +18,6 @@ export const up = (knex) =>
         .references('id')
         .inTable('users')
         .onDelete('RESTRICT');
-      table
-        .integer('executor_id')
-        .references('id')
-        .inTable('users')
-        .onDelete('SET NULL');
-  
-    })
+    });
 
 export const down = (knex) => knex.schema.dropTable('labels_for_tasks');
