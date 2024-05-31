@@ -143,11 +143,10 @@ export default (app) => {
           executor: executorId,
           ...restProps
         } = rest;
-        task.$set({
-          ...restProps, statusId, executorId, id: taskId,
-        });
-
         try {
+          task.$set({
+            ...restProps, statusId, executorId, id: taskId,
+          });
           await app.objection.models.task.transaction(async (trx) => {
             await patchedTask.$query(trx).patch(rest);
             await app.objection.models.labelsForTasks
@@ -156,29 +155,31 @@ export default (app) => {
               .skipUndefined()
               .whereNot('id', labelIds)
               .delete();
-            if (_.isArray(labelIds)) {
-              const arrPromises = [...labelIds].map((item) => {
+            if (!_.isEmpty(labelIds)) {
+              if (_.isArray(labelIds)) {
+                const arrPromises = [...labelIds].map((item) => {
+                  const obj = {
+                    labelId: Number(item),
+                    taskId: Number(taskId),
+                  };
+                  const labelsForTasksObj = new app.objection.models.labelsForTasks();
+                  labelsForTasksObj.$set(obj);
+                  return app.objection.models.labelsForTasks
+                    .query(trx)
+                    .insert(labelsForTasksObj);
+                });
+                await Promise.all(arrPromises);
+              } else {
                 const obj = {
-                  labelId: Number(item),
-                  taskId: Number(task.id),
+                  labelId: Number(labelIds),
+                  taskId: Number(taskId),
                 };
                 const labelsForTasksObj = new app.objection.models.labelsForTasks();
                 labelsForTasksObj.$set(obj);
-                return app.objection.models.labelsForTasks
+                await app.objection.models.labelsForTasks
                   .query(trx)
                   .insert(labelsForTasksObj);
-              });
-              await Promise.all(arrPromises);
-            } else {
-              const obj = {
-                labelId: Number(labelIds),
-                taskId: Number(taskId),
-              };
-              const labelsForTasksObj = new app.objection.models.labelsForTasks();
-              labelsForTasksObj.$set(obj);
-              await app.objection.models.labelsForTasks
-                .query(trx)
-                .insert(labelsForTasksObj);
+              }
             }
           });
           req.flash('info', i18next.t('flash.tasks.patch.success'));
