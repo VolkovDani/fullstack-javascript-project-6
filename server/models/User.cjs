@@ -13,6 +13,20 @@ module.exports = class User extends unique(BaseModel) {
     return 'users';
   }
 
+  static get jsonSchema() {
+    return {
+      type: 'object',
+      required: ['email', 'password', 'firstName', 'lastName'],
+      properties: {
+        id: { type: 'integer' },
+        firstName: { type: 'string', minLength: 1, maxLength: 255 },
+        lastName: { type: 'string', minLength: 1, maxLength: 255 },
+        email: { type: 'string', minLength: 1, maxLength: 255 },
+        password: { type: 'string', minLength: 3, maxLength: 255 },
+      },
+    };
+  }
+
   $afterValidate(json, opt) {
     const emailRegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
     if (!emailRegExp.test(json.email)) {
@@ -32,20 +46,6 @@ module.exports = class User extends unique(BaseModel) {
       });
     }
     return json;
-  }
-
-  static get jsonSchema() {
-    return {
-      type: 'object',
-      required: ['email', 'password', 'firstName', 'lastName'],
-      properties: {
-        id: { type: 'integer' },
-        firstName: { type: 'string', minLength: 1 },
-        lastName: { type: 'string', minLength: 1 },
-        email: { type: 'string', minLength: 1 },
-        password: { type: 'string', minLength: 3 },
-      },
-    };
   }
 
   static get relationMappings() {

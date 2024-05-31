@@ -13,7 +13,7 @@ module.exports = class Label extends BaseModel {
       required: ['name'],
       properties: {
         id: { type: 'integer' },
-        name: { type: 'string', minLength: 1 },
+        name: { type: 'string', minLength: 1, maxLength: 255 },
       },
     };
   }
