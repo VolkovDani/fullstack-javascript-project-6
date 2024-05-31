@@ -183,13 +183,13 @@ export default (app) => {
           });
           req.flash('info', i18next.t('flash.tasks.patch.success'));
           reply.redirect(app.reverse('tasks'));
-        } catch (data) {
+        } catch ({ data }) {
           reply.statusCode = 422;
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           reply.render('tasks/edit', {
             id: taskId,
             task,
-            errors: data.data,
+            errors: data,
             statuses,
             users,
             labels,
