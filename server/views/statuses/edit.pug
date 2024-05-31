@@ -5,6 +5,6 @@ block header
 
 block content
   +formFor(status)(action=routeTo('patchStatus', { id: Number(status.id) }) method='post')
-    +input(status, 'name', errors)(type="text")
+    +input(status, 'name', errors)(type="text" maxlength='50')
     input(name="_method" value='patch' type='hidden')
     +submit(status)(value=t('views.statuses.edit.submit'))
