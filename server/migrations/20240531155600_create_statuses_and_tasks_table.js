@@ -25,7 +25,10 @@ export const up = (knex) =>
               .references('id')
               .inTable('users')
               .onDelete('RESTRICT');
-            table.integer('executor_id');
+            table.integer('executor_id')
+              .references('id')
+              .inTable('users')
+              .onDelete('SET NULL');;
             table.timestamp('created_at').defaultTo(knex.fn.now());
             table.timestamp('updated_at').defaultTo(knex.fn.now());
           });
