@@ -136,7 +136,6 @@ const registerPlugins = async (app) => {
     knexConfig: knexConfig[mode],
     models,
   });
-
   // include and initialize the rollbar library with your access token
   const rollbar = new Rollbar({
     accessToken: process.env.ROLLBAR_API_KEY,
@@ -144,6 +143,7 @@ const registerPlugins = async (app) => {
     captureUnhandledRejections: true,
     payload: {
       code_version: '1.0.0',
+      environment: mode,
     },
   });
 
