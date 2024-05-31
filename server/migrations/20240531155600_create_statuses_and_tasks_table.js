@@ -1,7 +1,12 @@
 // @ts-check
 
 export const up = (knex) => (
-  knex.schema.createTable('tasks', (table) => {
+  knex.schema.createTable('statuses', (table) => {
+    table.increments('id').primary();
+    table.string('name', 50).unique();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
+  }).createTable('tasks', (table) => {
     table.increments('id').primary();
     table.string('name');
     table.string('description');
@@ -23,4 +28,4 @@ export const up = (knex) => (
   })
 );
 
-export const down = (knex) => knex.schema.dropTable('tasks');
+export const down = (knex) => knex.schema.dropTable('statuses');
