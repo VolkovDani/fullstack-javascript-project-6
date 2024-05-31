@@ -88,9 +88,12 @@ export default (app) => {
         req.body.data.creator = req.session.get('passport').id;
         const { labels: labelIds, ...rest } = req.body.data;
         try {
+          console.log('enter in try, rest', rest);
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
+            console.log('enter in transaction, validTask', validTask);
+
             const labels = [];
             if (labelIds) {
               const convertedLabelIds = [...labelIds].map((item) => Number(item));
