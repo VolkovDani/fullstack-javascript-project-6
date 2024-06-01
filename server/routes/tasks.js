@@ -137,13 +137,15 @@ export default (app) => {
           .query()
           .withGraphJoined('labels')
           .findById(taskId);
-        if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
+        console.log(patchedTask);
+        // if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
         const statuses = await getStatusesForSelect();
         const users = await getUsersForSelect();
         const labels = await app.objection.models.label.query();
         // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
         const task = new app.objection.models.task();
         const { labels: labelIds, ...rest } = req.body.data;
+        console.log(req.body.data);
         const {
           status: statusId,
           executor: executorId,
@@ -156,44 +158,56 @@ export default (app) => {
           await app.objection.models.task.transaction(async (trx) => {
             await patchedTask.$query(trx).patch(rest);
             if (!_.isEmpty(labelIds)) {
-              await app.objection.models.labelsForTasks
-                .query(trx)
-                .where({ taskId })
-                .skipUndefined()
-                .whereNotIn('id', labelIds)
-                .delete();
-              if (!_.isEmpty(labelIds)) {
-                if (_.isArray(labelIds)) {
-                  const arrPromises = [...labelIds].map((item) => {
-                    const obj = {
-                      labelId: Number(item),
-                      taskId: Number(taskId),
-                    };
-                    const labelsForTasksObj = new app.objection.models.labelsForTasks();
-                    labelsForTasksObj.$set(obj);
-                    return app.objection.models.labelsForTasks
-                      .query(trx)
-                      .insert(labelsForTasksObj);
-                  });
-                  await Promise.all(arrPromises);
-                } else {
-                  await app.objection.models.labelsForTasks
-                    .query(trx)
-                    .where({ taskId })
-                    .skipUndefined()
-                    .delete();
+              if (_.isArray(labelIds)) {
+                const convertedLabels = labelIds.map((item) => Number(item));
+                await app.objection.models.labelsForTasks
+                  .query(trx)
+                  .where({ taskId })
+                  .skipUndefined()
+                  .whereNotIn('labelId', convertedLabels)
+                  .delete();
 
+                const arrPromises = [...labelIds].map((item) => {
                   const obj = {
-                    labelId: Number(labelIds),
+                    labelId: Number(item),
                     taskId: Number(taskId),
                   };
                   const labelsForTasksObj = new app.objection.models.labelsForTasks();
                   labelsForTasksObj.$set(obj);
-                  await app.objection.models.labelsForTasks
+                  return app.objection.models.labelsForTasks
                     .query(trx)
                     .insert(labelsForTasksObj);
-                }
+                });
+                await Promise.all(arrPromises);
+              } else {
+                await app.objection.models.labelsForTasks
+                  .query(trx)
+                  .where({ taskId })
+                  .skipUndefined()
+                  .whereNot('labelId', Number(labelIds))
+                  .delete();
+
+                await app.objection.models.labelsForTasks
+                  .query(trx)
+                  .where({ taskId })
+                  .skipUndefined()
+                  .delete();
+
+                const obj = {
+                  labelId: Number(labelIds),
+                  taskId: Number(taskId),
+                };
+                const labelsForTasksObj = new app.objection.models.labelsForTasks();
+                labelsForTasksObj.$set(obj);
+                await app.objection.models.labelsForTasks
+                  .query(trx)
+                  .insert(labelsForTasksObj);
               }
+            } else {
+              await app.objection.models.labelsForTasks
+                .query(trx)
+                .where({ taskId })
+                .delete();
             }
           });
           req.flash('info', i18next.t('flash.tasks.patch.success'));
