@@ -89,6 +89,7 @@ export default (app) => {
         const { labels: labelIds, ...rest } = req.body.data;
         try {
           console.log('enter in try, rest', rest);
+          console.log(req.body.data);
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
