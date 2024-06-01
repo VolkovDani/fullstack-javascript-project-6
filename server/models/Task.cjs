@@ -19,7 +19,7 @@ module.exports = class Task extends BaseModel {
         description: { type: 'string', maxLength: 255 },
         statusId: { type: 'integer', minimum: 1 },
         creatorId: { type: 'integer', minimum: 1 },
-        executorId: { type: 'integer' },
+        executorId: { type: 'integer', nullable: true },
       },
     };
   }
@@ -48,8 +48,14 @@ module.exports = class Task extends BaseModel {
       statusId: (status) => Number(status),
       creator: (creator) => Number(creator),
       creatorId: (creator) => Number(creator),
-      executor: (executor) => Number(executor),
-      executorId: (executor) => Number(executor),
+      executor: (executor) => {
+        if (Number(executor) === 0) return null;
+        return Number(executor);
+      },
+      executorId: (executor) => {
+        if (Number(executor) === 0) return null;
+        return Number(executor);
+      },
       labels: (labels) => labels,
     };
     const getTaskAttributeFromName = {

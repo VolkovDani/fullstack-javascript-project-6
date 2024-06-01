@@ -85,13 +85,14 @@ export default (app) => {
       { preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
-        req.body.data.creator = req.session.get('passport').id;
+        req.body.data.creatorId = req.session.get('passport').id;
         const { labels: labelIds, ...rest } = req.body.data;
         try {
           console.log('enter in try, rest', rest);
           console.log(req.body.data);
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
+          console.log('validation');
           await app.objection.models.task.transaction(async (trx) => {
             console.log('enter in transaction, validTask', validTask);
 
@@ -113,14 +114,15 @@ export default (app) => {
           });
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
-        } catch ({ data }) {
+        } catch (data) {
+          console.log(data);
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
           const labelsSelect = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data, labels: labelsSelect,
+            task, users, statuses, errors: data.data, labels: labelsSelect,
           });
         }
         return reply;

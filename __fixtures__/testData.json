@@ -60,14 +60,14 @@
     "newTask": {
       "name": "Test task",
       "description": "Some description",
-      "executorId": "",
+      "executorId": 0,
       "statusId": 1
     },
     "new": {
       "id": 4,
       "name": "Test task",
       "description": "Some description",
-      "executorId": 0,
+      "executorId": null,
       "statusId": 1,
       "creatorId": 2
     }
