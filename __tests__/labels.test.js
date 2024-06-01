@@ -169,7 +169,6 @@ describe('test labels CRUD', () => {
       .query()
       .withGraphJoined('labels')
       .findById(testData.tasks.new.id);
-    console.log(task);
 
     expect(task).toMatchObject({ ...testData.tasks.new });
     expect(task).toMatchObject({ labels: [{ id: 1, ...expected }] });

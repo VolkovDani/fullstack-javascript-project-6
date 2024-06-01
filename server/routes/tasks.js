@@ -88,14 +88,9 @@ export default (app) => {
         req.body.data.creatorId = req.session.get('passport').id;
         const { labels: labelIds, ...rest } = req.body.data;
         try {
-          console.log('enter in try, rest', rest);
-          console.log(req.body.data);
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
-          console.log('validation');
           await app.objection.models.task.transaction(async (trx) => {
-            console.log('enter in transaction, validTask', validTask);
-
             const labels = [];
             if (labelIds) {
               const convertedLabelIds = [...labelIds].map((item) => Number(item));
@@ -114,15 +109,14 @@ export default (app) => {
           });
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
-        } catch (data) {
-          console.log(data);
+        } catch ({ data }) {
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
           const labelsSelect = await app.objection.models.label.query();
 
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data.data, labels: labelsSelect,
+            task, users, statuses, errors: data, labels: labelsSelect,
           });
         }
         return reply;
@@ -137,7 +131,6 @@ export default (app) => {
           .query()
           .withGraphJoined('labels')
           .findById(taskId);
-        console.log(patchedTask);
         // if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
         const statuses = await getStatusesForSelect();
         const users = await getUsersForSelect();
@@ -145,7 +138,6 @@ export default (app) => {
         // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
         const task = new app.objection.models.task();
         const { labels: labelIds, ...rest } = req.body.data;
-        console.log(req.body.data);
         const {
           status: statusId,
           executor: executorId,
