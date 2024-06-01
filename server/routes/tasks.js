@@ -160,7 +160,7 @@ export default (app) => {
                 .query(trx)
                 .where({ taskId })
                 .skipUndefined()
-                .whereNot('id', labelIds)
+                .whereNotIn('id', labelIds)
                 .delete();
               if (!_.isEmpty(labelIds)) {
                 if (_.isArray(labelIds)) {
