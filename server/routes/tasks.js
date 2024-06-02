@@ -160,7 +160,7 @@ export default (app) => {
       '/tasks/:id',
       { name: 'deleteTask', preValidation: app.authenticate },
       async (req, reply) => {
-        const taskId = Number(req.params.id);
+        const taskId = req.params.id;
         const userId = Number(req.session.get('passport').id);
         const task = await objectionModels.task
           .query()
@@ -176,16 +176,10 @@ export default (app) => {
               .query(trx)
               .findById(taskId)
               .delete();
-            const result = await objectionModels.labelsForTasks
+            await objectionModels.labelsForTasks
               .query(trx)
               .delete()
-              .whereIn(
-                'taskId',
-                objectionModels.labelsForTasks.query(trx)
-                  .select('labels_for_tasks.taskId')
-                  .where({ taskId }),
-              );
-            return result;
+              .where({ taskId });
           });
           req.flash('info', i18next.t('flash.tasks.delete.success'));
           reply.redirect(app.reverse('tasks'));
