@@ -59,11 +59,10 @@ export default (app) => {
       async (req, reply) => {
         const labelId = req.params.id;
         try {
-          await objectionModels.label.fromJson(req.body.data);
-          const patchedLabel = await objectionModels.label
+          await objectionModels.label
             .query()
-            .findById(labelId);
-          await patchedLabel.$query().patch(req.body.data);
+            .findById(labelId)
+            .patch(req.body.data);
           req.flash('info', i18next.t('flash.labels.patch.success'));
           reply.redirect(app.reverse('labels'));
         } catch ({ data }) {
