@@ -80,9 +80,10 @@ export default (app) => {
           await objectionModels.task.transaction(async (trx) => {
             const labels = [];
             if (!_.isEmpty(labelsFromForm)) {
+              const arrLabelIds = [...labelsFromForm].map(Number);
               await objectionModels.label
                 .query(trx)
-                .whereIn('id', labelsFromForm)
+                .whereIn('id', arrLabelIds)
                 .then((items) => labels.push(...items));
             }
             const newTask = await objectionModels.task
@@ -98,7 +99,9 @@ export default (app) => {
         } catch ({ data }) {
           const [statuses, executors, labels] = await getListItems();
           if (!_.isEmpty(labelsFromForm)) {
-            task.labels = await objectionModels.label.query().whereIn('id', labelsFromForm);
+            const arrLabelIds = [...labelsFromForm].map(Number);
+
+            task.labels = await objectionModels.label.query().whereIn('id', arrLabelIds);
           }
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
