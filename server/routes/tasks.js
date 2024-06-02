@@ -29,10 +29,9 @@ export default (app) => {
       '/tasks/new',
       { name: 'newTask', preValidation: app.authenticate },
       async (req, reply) => {
-        const task = new objectionModels.task();
         const [statuses, executors, labels] = await getListItems();
         reply.render('tasks/new', {
-          task, executors, statuses, labels,
+          task: {}, executors, statuses, labels,
         });
         return reply;
       },

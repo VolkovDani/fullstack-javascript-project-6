@@ -28,10 +28,9 @@ export default (app) => {
       { preValidation: app.authenticate },
       async (req, reply) => {
         const status = new objectionModels.status();
-        status.$set(req.body.data);
         try {
-          const validStatus = await objectionModels.status.fromJson(req.body.data);
-          await objectionModels.status.query().insert(validStatus);
+          status.$set(req.body.data);
+          await objectionModels.status.query().insert(req.body.data);
           req.flash('info', i18next.t('flash.statuses.create.success'));
           reply.redirect(app.reverse('statuses'));
         } catch ({ data }) {
@@ -68,7 +67,7 @@ export default (app) => {
           reply.redirect(app.reverse('statuses'));
         } catch ({ data }) {
           const status = new objectionModels.status();
-          status.$set({ id: statusId, ...req.body.data });
+          status.$set({ ...req.body.data });
           req.flash('error', i18next.t('flash.statuses.patch.error'));
           reply.code(422).render('statuses/edit', { id: statusId, status, errors: data });
         }
