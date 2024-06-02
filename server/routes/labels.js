@@ -4,12 +4,13 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
+  const objectionModels = app.objection.models;
   app
     .get(
       '/labels',
       { name: 'labels', preValidation: app.authenticate },
       async (req, reply) => {
-        const labels = await app.objection.models.label.query();
+        const labels = await objectionModels.label.query();
         reply.render('labels/index', { labels });
         return reply;
       },
@@ -26,11 +27,11 @@ export default (app) => {
       '/labels',
       { preValidation: app.authenticate },
       async (req, reply) => {
-        const label = new app.objection.models.label();
+        const label = new objectionModels.label();
         label.$set(req.body.data);
         try {
-          const validLabel = await app.objection.models.label.fromJson(req.body.data);
-          await app.objection.models.label.query().insert(validLabel);
+          const validLabel = await objectionModels.label.fromJson(req.body.data);
+          await objectionModels.label.query().insert(validLabel);
           req.flash('info', i18next.t('flash.labels.create.success'));
           reply.redirect(app.reverse('labels'));
         } catch ({ data }) {
@@ -45,7 +46,7 @@ export default (app) => {
       { name: 'editLabel', preValidation: app.authenticate },
       async (req, reply) => {
         const labelId = req.params.id;
-        const label = await app.objection.models.label
+        const label = await objectionModels.label
           .query()
           .findById(labelId);
         reply.render('labels/edit', { label });
@@ -58,8 +59,8 @@ export default (app) => {
       async (req, reply) => {
         const labelId = req.params.id;
         try {
-          await app.objection.models.label.fromJson(req.body.data);
-          const patchedLabel = await app.objection.models.label
+          await objectionModels.label.fromJson(req.body.data);
+          const patchedLabel = await objectionModels.label
             .query()
             .findById(labelId);
           await patchedLabel.$query().patch(req.body.data);
@@ -67,7 +68,7 @@ export default (app) => {
           reply.redirect(app.reverse('labels'));
         } catch ({ data }) {
           reply.statusCode = 422;
-          const label = new app.objection.models.label();
+          const label = new objectionModels.label();
           label.$set({ id: labelId, ...req.body.data });
           req.flash('error', i18next.t('flash.labels.patch.error'));
           reply.render('labels/edit', { id: labelId, label, errors: data });
@@ -80,10 +81,10 @@ export default (app) => {
       { name: 'deleteLabel', preValidation: app.authenticate },
       async (req, reply) => {
         const label = req.params.id;
-        const labels = await app.objection.models.label
+        const labels = await objectionModels.label
           .query();
         try {
-          const relationsWithTasks = await app.objection.models.labelsForTasks
+          const relationsWithTasks = await objectionModels.labelsForTasks
             .query()
             .where({ labelId: label });
           if (!_.isEmpty(relationsWithTasks)) {
@@ -91,7 +92,7 @@ export default (app) => {
             reply.render('labels/index', { labels });
             return reply;
           }
-          await app.objection.models.label
+          await objectionModels.label
             .query()
             .findById(label)
             .delete();

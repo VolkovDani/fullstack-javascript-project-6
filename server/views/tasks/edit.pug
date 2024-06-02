@@ -8,7 +8,7 @@ block content
     +input(task, 'name', errors)(maxlength='100')
     +inputTextarea(task, 'description', errors)
     +inputSelect(statuses, 'statusId', errors, task)
-    +inputSelect(users, 'executorId', errors, task)
+    +inputSelect(executors, 'executorId', errors, task)
     +inputSelectMultipleLabels(labels, 'labels', errors, task)
     input(name="_method" value='patch' type='hidden')
     +submit(task)(value=t('views.tasks.actionButtons.edit'))

@@ -4,12 +4,13 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
+  const objectionModels = app.objection.models;
   app
     .get(
       '/users',
       { name: 'users' },
       async (req, reply) => {
-        const users = await app.objection.models.user.query();
+        const users = await objectionModels.user.query();
         reply.render('users/index', { users });
         return reply;
       },
@@ -18,7 +19,7 @@ export default (app) => {
       '/users/new',
       { name: 'newUser' },
       (req, reply) => {
-        const user = new app.objection.models.user();
+        const user = new objectionModels.user();
         reply.render('users/new', { user });
       },
     )
@@ -27,7 +28,7 @@ export default (app) => {
       { name: 'editUser', preValidation: app.authenticate },
       async (req, reply) => {
         const userId = req.params.id;
-        const user = await app.objection.models.user
+        const user = await objectionModels.user
           .query()
           .findById(userId);
 
@@ -43,12 +44,12 @@ export default (app) => {
     .post(
       '/users',
       async (req, reply) => {
-        const user = new app.objection.models.user();
+        const user = new objectionModels.user();
         user.$set(req.body.data);
 
         try {
-          const validUser = await app.objection.models.user.fromJson(req.body.data);
-          await app.objection.models.user.query().insert(validUser);
+          const validUser = await objectionModels.user.fromJson(req.body.data);
+          await objectionModels.user.query().insert(validUser);
           req.flash('info', i18next.t('flash.users.create.success'));
           reply.redirect(app.reverse('root'));
         } catch ({ data }) {
@@ -70,8 +71,8 @@ export default (app) => {
         }
         const { password, ...neededRest } = req.body.data;
         try {
-          await app.objection.models.user.fromJson(req.body.data);
-          const patchedUser = await app.objection.models.user
+          await objectionModels.user.fromJson(req.body.data);
+          const patchedUser = await objectionModels.user
             .query()
             .findById(userId);
 
@@ -82,7 +83,7 @@ export default (app) => {
         } catch ({ data }) {
           reply.statusCode = 422;
           // Создаю юзера чтобы передать его обратно в форму в случае ошибок в форме
-          const user = new app.objection.models.user();
+          const user = new objectionModels.user();
           user.$set({ id: userId, ...neededRest });
           req.flash('error', i18next.t('flash.users.patch.error'));
           reply.render('users/edit', { id: userId, user, errors: data });
@@ -100,7 +101,7 @@ export default (app) => {
           reply.redirect(app.reverse('users'));
           return reply;
         }
-        const task = await app.objection.models.task
+        const task = await objectionModels.task
           .query()
           .where({ creatorId: userId })
           .orWhere({ executorId: userId });
@@ -110,7 +111,7 @@ export default (app) => {
           return reply;
         }
         try {
-          await app.objection.models.user
+          await objectionModels.user
             .query()
             .findById(Number(userId))
             .delete();

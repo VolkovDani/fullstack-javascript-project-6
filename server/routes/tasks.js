@@ -3,9 +3,15 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
-  const getUsersForSelect = () => app.objection.models.user
+  const objectionModels = app.objection.models;
+  const getUsersForSelect = () => objectionModels.user
     .query()
     .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
+  const getListItems = () => Promise.all([
+    objectionModels.status.query(),
+    getUsersForSelect(),
+    objectionModels.label.query(),
+  ]);
 
   app
     .get(
@@ -13,11 +19,7 @@ export default (app) => {
       { name: 'tasks', preValidation: app.authenticate },
       async (req, reply) => {
         const tasks = await app.getFilteredTasks(req);
-        const [statuses, executors, labels] = await Promise.all([
-          app.objection.models.status.query(),
-          getUsersForSelect(),
-          app.objection.models.label.query(),
-        ]);
+        const [statuses, executors, labels] = await getListItems();
         reply.render('tasks/index', {
           tasks, statuses, executors, labels, selected: { ...req.query },
         });
@@ -28,12 +30,10 @@ export default (app) => {
       '/tasks/new',
       { name: 'newTask', preValidation: app.authenticate },
       async (req, reply) => {
-        const task = new app.objection.models.task();
-        const statuses = await app.objection.models.status.query();
-        const users = await getUsersForSelect();
-        const labels = await app.objection.models.label.query();
+        const task = new objectionModels.task();
+        const [statuses, executors, labels] = await getListItems();
         reply.render('tasks/new', {
-          task, users, statuses, labels,
+          task, executors, statuses, labels,
         });
         return reply;
       },
@@ -43,7 +43,7 @@ export default (app) => {
       { name: 'taskPage', preValidation: app.authenticate },
       async (req, reply) => {
         const taskId = req.params.id;
-        const task = await app.objection.models.task
+        const task = await objectionModels.task
           .query()
           .findById(taskId)
           .withGraphJoined('[status, creator, executor, labels]');
@@ -56,17 +56,13 @@ export default (app) => {
       { name: 'editTask', preValidation: app.authenticate },
       async (req, reply) => {
         const taskId = req.params.id;
-        const task = await app.objection.models.task
+        const task = await objectionModels.task
           .query()
           .findById(taskId)
           .withGraphJoined('[status, creator, executor, labels]');
-
-        const statuses = await app.objection.models.status.query();
-        const users = await getUsersForSelect();
-        const labels = await app.objection.models.label
-          .query();
+        const [statuses, executors, labels] = await getListItems();
         reply.render('tasks/edit', {
-          id: task, task, statuses, users, labels,
+          id: task, task, statuses, executors, labels,
         });
         return reply;
       },
@@ -76,7 +72,7 @@ export default (app) => {
       { preValidation: app.authenticate },
       async (req, reply) => {
         req.body.data.creatorId = req.session.get('passport').id;
-        const task = new app.objection.models.task();
+        const task = new objectionModels.task();
         const { labels: labelsFromForm, ...rest } = req.body.data;
         const convertedLabelIds = [];
         if (!_.isEmpty(labelsFromForm)) {
@@ -84,16 +80,16 @@ export default (app) => {
         }
         try {
           task.$set(rest);
-          const validTask = await app.objection.models.task.fromJson(rest);
-          await app.objection.models.task.transaction(async (trx) => {
+          const validTask = await objectionModels.task.fromJson(rest);
+          await objectionModels.task.transaction(async (trx) => {
             const labels = [];
             if (convertedLabelIds.length > 0) {
-              await app.objection.models.label
+              await objectionModels.label
                 .query(trx)
                 .whereIn('id', [...convertedLabelIds])
                 .then((items) => labels.push(...items));
             }
-            const newTask = await app.objection.models.task
+            const newTask = await objectionModels.task
               .query(trx)
               .upsertGraphAndFetch({
                 ...validTask, labels,
@@ -104,13 +100,12 @@ export default (app) => {
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
-          const statuses = await app.objection.models.status.query();
-          const users = await getUsersForSelect();
-          const labelsSelect = await app.objection.models.label.query();
-          task.labels = await app.objection.models.label.query().whereIn('id', convertedLabelIds);
+          const [statuses, executors, labels] = await getListItems();
+
+          task.labels = await objectionModels.label.query().whereIn('id', convertedLabelIds);
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
-            task, users, statuses, errors: data, labels: labelsSelect,
+            task, executors, statuses, errors: data, labels,
           });
         }
         return reply;
@@ -121,16 +116,12 @@ export default (app) => {
       { name: 'patchTask', preValidation: app.authenticate },
       async (req, reply) => {
         const taskId = req.params.id;
-        const patchedTask = await app.objection.models.task
+        const patchedTask = await objectionModels.task
           .query()
           .withGraphJoined('labels')
           .findById(taskId);
-        // if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
-        const statuses = await app.objection.models.status.query();
-        const users = await getUsersForSelect();
-        const labels = await app.objection.models.label.query();
         // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
-        const task = new app.objection.models.task();
+        const task = new objectionModels.task();
         const { labels: labelIds, ...rest } = req.body.data;
         const {
           status: statusId,
@@ -141,12 +132,12 @@ export default (app) => {
           task.$set({
             ...restProps, statusId, executorId, id: taskId,
           });
-          await app.objection.models.task.transaction(async (trx) => {
+          await objectionModels.task.transaction(async (trx) => {
             await patchedTask.$query(trx).patch(rest);
             if (!_.isEmpty(labelIds)) {
               if (_.isArray(labelIds)) {
                 const convertedLabels = labelIds.map((item) => Number(item));
-                await app.objection.models.labelsForTasks
+                await objectionModels.labelsForTasks
                   .query(trx)
                   .where({ taskId })
                   .skipUndefined()
@@ -158,22 +149,22 @@ export default (app) => {
                     labelId: Number(item),
                     taskId: Number(taskId),
                   };
-                  const labelsForTasksObj = new app.objection.models.labelsForTasks();
+                  const labelsForTasksObj = new objectionModels.labelsForTasks();
                   labelsForTasksObj.$set(obj);
-                  return app.objection.models.labelsForTasks
+                  return objectionModels.labelsForTasks
                     .query(trx)
                     .insert(labelsForTasksObj);
                 });
                 await Promise.all(arrPromises);
               } else {
-                await app.objection.models.labelsForTasks
+                await objectionModels.labelsForTasks
                   .query(trx)
                   .where({ taskId })
                   .skipUndefined()
                   .whereNot('labelId', Number(labelIds))
                   .delete();
 
-                await app.objection.models.labelsForTasks
+                await objectionModels.labelsForTasks
                   .query(trx)
                   .where({ taskId })
                   .skipUndefined()
@@ -183,14 +174,14 @@ export default (app) => {
                   labelId: Number(labelIds),
                   taskId: Number(taskId),
                 };
-                const labelsForTasksObj = new app.objection.models.labelsForTasks();
+                const labelsForTasksObj = new objectionModels.labelsForTasks();
                 labelsForTasksObj.$set(obj);
-                await app.objection.models.labelsForTasks
+                await objectionModels.labelsForTasks
                   .query(trx)
                   .insert(labelsForTasksObj);
               }
             } else {
-              await app.objection.models.labelsForTasks
+              await objectionModels.labelsForTasks
                 .query(trx)
                 .where({ taskId })
                 .delete();
@@ -201,12 +192,13 @@ export default (app) => {
         } catch ({ data }) {
           reply.statusCode = 422;
           req.flash('error', i18next.t('flash.tasks.patch.error'));
+          const [statuses, executors, labels] = await getListItems();
           reply.render('tasks/edit', {
             id: taskId,
             task,
             errors: data,
             statuses,
-            users,
+            executors,
             labels,
           });
         }
@@ -219,7 +211,7 @@ export default (app) => {
       async (req, reply) => {
         const taskId = Number(req.params.id);
         const userId = Number(req.session.get('passport').id);
-        const task = await app.objection.models.task
+        const task = await objectionModels.task
           .query()
           .findById(taskId);
         if (userId !== task.creatorId) {
@@ -228,17 +220,17 @@ export default (app) => {
           return reply;
         }
         try {
-          await app.objection.models.task.transaction(async (trx) => {
-            await app.objection.models.task
+          await objectionModels.task.transaction(async (trx) => {
+            await objectionModels.task
               .query(trx)
               .findById(taskId)
               .delete();
-            const result = await app.objection.models.labelsForTasks
+            const result = await objectionModels.labelsForTasks
               .query(trx)
               .delete()
               .whereIn(
                 'taskId',
-                app.objection.models.labelsForTasks.query(trx)
+                objectionModels.labelsForTasks.query(trx)
                   .select('labels_for_tasks.taskId')
                   .where({ taskId }),
               );

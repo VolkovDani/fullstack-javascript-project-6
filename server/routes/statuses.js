@@ -4,12 +4,13 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
+  const objectionModels = app.objection.models;
   app
     .get(
       '/statuses',
       { name: 'statuses', preValidation: app.authenticate },
       async (req, reply) => {
-        const statuses = await app.objection.models.status.query();
+        const statuses = await objectionModels.status.query();
         reply.render('statuses/index', { statuses });
         return reply;
       },
@@ -26,11 +27,11 @@ export default (app) => {
       '/statuses',
       { preValidation: app.authenticate },
       async (req, reply) => {
-        const status = new app.objection.models.status();
+        const status = new objectionModels.status();
         status.$set(req.body.data);
         try {
-          const validStatus = await app.objection.models.status.fromJson(req.body.data);
-          await app.objection.models.status.query().insert(validStatus);
+          const validStatus = await objectionModels.status.fromJson(req.body.data);
+          await objectionModels.status.query().insert(validStatus);
           req.flash('info', i18next.t('flash.statuses.create.success'));
           reply.redirect(app.reverse('statuses'));
         } catch ({ data }) {
@@ -45,7 +46,7 @@ export default (app) => {
       { name: 'editStatus', preValidation: app.authenticate },
       async (req, reply) => {
         const statusId = req.params.id;
-        const status = await app.objection.models.status
+        const status = await objectionModels.status
           .query()
           .findById(statusId);
         reply.render('statuses/edit', { status });
@@ -58,8 +59,8 @@ export default (app) => {
       async (req, reply) => {
         const statusId = req.params.id;
         try {
-          await app.objection.models.status.fromJson(req.body.data);
-          const patchedStatus = await app.objection.models.status
+          await objectionModels.status.fromJson(req.body.data);
+          const patchedStatus = await objectionModels.status
             .query()
             .findById(statusId);
           await patchedStatus.$query().patch(req.body.data);
@@ -67,7 +68,7 @@ export default (app) => {
           reply.redirect(app.reverse('statuses'));
         } catch ({ data }) {
           reply.statusCode = 422;
-          const status = new app.objection.models.status();
+          const status = new objectionModels.status();
           status.$set({ id: statusId, ...req.body.data });
           req.flash('error', i18next.t('flash.statuses.patch.error'));
           reply.render('statuses/edit', { id: statusId, status, errors: data });
@@ -80,7 +81,7 @@ export default (app) => {
       { name: 'deleteStatus', preValidation: app.authenticate },
       async (req, reply) => {
         const status = req.params.id;
-        const relatedTask = await app.objection.models.task
+        const relatedTask = await objectionModels.task
           .query()
           .where({ statusId: status });
         if (!_.isEmpty(relatedTask)) {
@@ -89,7 +90,7 @@ export default (app) => {
           return reply;
         }
         try {
-          await app.objection.models.status
+          await objectionModels.status
             .query()
             .findById(status)
             .delete();
