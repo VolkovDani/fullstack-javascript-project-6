@@ -78,14 +78,7 @@ export default (app) => {
           task.$set(rest);
           const validTask = await objectionModels.task.fromJson(rest);
           await objectionModels.task.transaction(async (trx) => {
-            const labels = [];
-            if (!_.isEmpty(labelsFromForm)) {
-              const arrLabelIds = [...labelsFromForm].map(Number);
-              await objectionModels.label
-                .query(trx)
-                .whereIn('id', arrLabelIds)
-                .then((items) => labels.push(...items));
-            }
+            const labels = await objectionModels.label.query(trx).findByIds(labelsFromForm || []);
             const newTask = await objectionModels.task
               .query(trx)
               .upsertGraphAndFetch({
@@ -97,10 +90,7 @@ export default (app) => {
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
           const [statuses, executors, labels] = await getListItems();
-          if (!_.isEmpty(labelsFromForm)) {
-            const arrLabelIds = [...labelsFromForm].map(Number);
-            task.labels = await objectionModels.label.query().whereIn('id', arrLabelIds);
-          }
+          task.labels = await objectionModels.label.query().findByIds(labelsFromForm || []);
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
             task, executors, statuses, errors: data, labels,
@@ -121,14 +111,7 @@ export default (app) => {
             ...rest, id: taskId,
           });
           await objectionModels.task.transaction((async (trx) => {
-            const labels = [];
-            if (!_.isEmpty(labelsFromForm)) {
-              const arrLabelIds = [...labelsFromForm].map(Number);
-              await objectionModels.label
-                .query(trx)
-                .whereIn('id', arrLabelIds)
-                .then((items) => labels.push(...items));
-            }
+            const labels = await objectionModels.label.query(trx).findByIds(labelsFromForm || []);
             await objectionModels.task.query(trx)
               .upsertGraphAndFetch({
                 labels, ...rest, id: taskId,
@@ -137,10 +120,7 @@ export default (app) => {
           req.flash('info', i18next.t('flash.tasks.patch.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
-          if (!_.isEmpty(labelsFromForm)) {
-            const arrLabelIds = [...labelsFromForm].map(Number);
-            task.labels = await objectionModels.label.query().whereIn('id', arrLabelIds);
-          }
+          task.labels = await objectionModels.label.query().findByIds(labelsFromForm || []);
 
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           const [statuses, executors, labels] = await getListItems();
