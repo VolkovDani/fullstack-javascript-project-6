@@ -142,10 +142,9 @@ export default (app) => {
             task.labels = await objectionModels.label.query().whereIn('id', arrLabelIds);
           }
 
-          reply.statusCode = 422;
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           const [statuses, executors, labels] = await getListItems();
-          reply.render('tasks/edit', {
+          reply.code(422).render('tasks/edit', {
             id: taskId,
             task,
             errors: data,

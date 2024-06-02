@@ -81,12 +81,10 @@ export default (app) => {
           req.flash('info', i18next.t('flash.users.patch.success'));
           reply.redirect(app.reverse('users'));
         } catch ({ data }) {
-          reply.statusCode = 422;
-          // Создаю юзера чтобы передать его обратно в форму в случае ошибок в форме
           const user = new objectionModels.user();
           user.$set({ id: userId, ...neededRest });
           req.flash('error', i18next.t('flash.users.patch.error'));
-          reply.render('users/edit', { id: userId, user, errors: data });
+          reply.code(422).render('users/edit', { id: userId, user, errors: data });
         }
         return reply;
       },

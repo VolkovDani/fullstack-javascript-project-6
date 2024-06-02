@@ -67,11 +67,10 @@ export default (app) => {
           req.flash('info', i18next.t('flash.statuses.patch.success'));
           reply.redirect(app.reverse('statuses'));
         } catch ({ data }) {
-          reply.statusCode = 422;
           const status = new objectionModels.status();
           status.$set({ id: statusId, ...req.body.data });
           req.flash('error', i18next.t('flash.statuses.patch.error'));
-          reply.render('statuses/edit', { id: statusId, status, errors: data });
+          reply.code(422).render('statuses/edit', { id: statusId, status, errors: data });
         }
         return reply;
       },
