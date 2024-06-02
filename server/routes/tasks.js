@@ -45,12 +45,8 @@ export default (app) => {
         const taskId = req.params.id;
         const task = await app.objection.models.task
           .query()
-          .alias('task')
-          .findOne({ 'task.id': taskId })
-          .withGraphJoined('statuses')
-          .withGraphJoined('creators')
-          .withGraphJoined('executors')
-          .withGraphJoined('labels');
+          .findById(taskId)
+          .withGraphJoined('[status, creator, executor, labels]');
         reply.render('tasks/info', { task });
         return reply;
       },
@@ -62,12 +58,8 @@ export default (app) => {
         const taskId = req.params.id;
         const task = await app.objection.models.task
           .query()
-          .alias('task')
-          .findOne({ 'task.id': taskId })
-          .withGraphJoined('statuses')
-          .withGraphJoined('creators')
-          .withGraphJoined('executors')
-          .withGraphJoined('labels');
+          .findById(taskId)
+          .withGraphJoined('[status, creator, executor, labels]');
 
         const statuses = await app.objection.models.status.query();
         const users = await getUsersForSelect();
@@ -92,7 +84,6 @@ export default (app) => {
         }
         try {
           task.$set(rest);
-          console.log(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
             const labels = [];
@@ -102,7 +93,6 @@ export default (app) => {
                 .whereIn('id', [...convertedLabelIds])
                 .then((items) => labels.push(...items));
             }
-            console.log('beforeUpsert');
             const newTask = await app.objection.models.task
               .query(trx)
               .upsertGraphAndFetch({

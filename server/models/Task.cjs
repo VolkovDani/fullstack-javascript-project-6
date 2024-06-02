@@ -26,16 +26,16 @@ module.exports = class Task extends BaseModel {
 
   static modifiers = {
     findCreator(query, creatorId) {
-      query.withGraphJoined('creators')
-        .skipUndefined().where('creators.id', creatorId || undefined);
+      query.withGraphJoined('creator')
+        .skipUndefined().where('creator.id', creatorId || undefined);
     },
     findStatus(query, statusId) {
-      query.withGraphJoined('statuses')
-        .skipUndefined().where('statuses.id', statusId || undefined);
+      query.withGraphJoined('status')
+        .skipUndefined().where('status.id', statusId || undefined);
     },
     findExecutor(query, executorId) {
-      query.withGraphJoined('executors')
-        .skipUndefined().where('executors.id', executorId || undefined);
+      query.withGraphJoined('executor')
+        .skipUndefined().where('executor.id', executorId || undefined);
     },
     findLabels(query, labelsIds) {
       query.withGraphJoined('labels')
@@ -61,7 +61,7 @@ module.exports = class Task extends BaseModel {
 
   static get relationMappings() {
     return {
-      statuses: {
+      status: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'Status.cjs',
         join: {
@@ -69,7 +69,7 @@ module.exports = class Task extends BaseModel {
           to: 'statuses.id',
         },
       },
-      creators: {
+      creator: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'User.cjs',
         join: {
@@ -77,7 +77,7 @@ module.exports = class Task extends BaseModel {
           to: 'users.id',
         },
       },
-      executors: {
+      executor: {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'User.cjs',
         join: {
