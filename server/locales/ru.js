@@ -117,6 +117,7 @@ export default {
         id: 'ID',
         name: 'Наименование',
         createdAt: 'Дата создания',
+        actions: 'Действия',
         actionButtons: {
           create: 'Создать метку',
           edit: 'Изменить',
@@ -136,6 +137,7 @@ export default {
         id: 'ID',
         statusName: 'Наименование',
         createdAt: 'Дата создания',
+        actions: 'Действия',
         actionButtons: {
           create: 'Создать статус',
           edit: 'Изменить',
@@ -169,6 +171,7 @@ export default {
         author: 'Автор',
         executer: 'Исполнитель',
         createdAt: 'Дата создания',
+        actions: 'Действия',
         actionButtons: {
           edit: 'Изменить',
           delete: 'Удалить',
