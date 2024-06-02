@@ -84,16 +84,19 @@ export default (app) => {
       '/tasks',
       { preValidation: app.authenticate },
       async (req, reply) => {
-        const task = new app.objection.models.task();
         req.body.data.creatorId = req.session.get('passport').id;
-        const { labels: labelIds, ...rest } = req.body.data;
+        const task = new app.objection.models.task();
+        const { labels: labelsFromForm, ...rest } = req.body.data;
+        const convertedLabelIds = [];
+        if (!_.isEmpty(labelsFromForm)) {
+          [...labelsFromForm].forEach((item) => convertedLabelIds.push(Number(item)));
+        }
         try {
           task.$set(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
             const labels = [];
-            if (labelIds) {
-              const convertedLabelIds = [...labelIds].map((item) => Number(item));
+            if (convertedLabelIds.length > 0) {
               await app.objection.models.label
                 .query(trx)
                 .whereIn('id', [...convertedLabelIds])
@@ -113,7 +116,7 @@ export default (app) => {
           const statuses = await getStatusesForSelect();
           const users = await getUsersForSelect();
           const labelsSelect = await app.objection.models.label.query();
-
+          task.labels = await app.objection.models.label.query().whereIn('id', convertedLabelIds);
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
             task, users, statuses, errors: data, labels: labelsSelect,
