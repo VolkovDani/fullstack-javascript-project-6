@@ -92,6 +92,7 @@ export default (app) => {
         }
         try {
           task.$set(rest);
+          console.log(rest);
           const validTask = await app.objection.models.task.fromJson(rest);
           await app.objection.models.task.transaction(async (trx) => {
             const labels = [];
@@ -101,6 +102,7 @@ export default (app) => {
                 .whereIn('id', [...convertedLabelIds])
                 .then((items) => labels.push(...items));
             }
+            console.log('beforeUpsert');
             const newTask = await app.objection.models.task
               .query(trx)
               .upsertGraphAndFetch({

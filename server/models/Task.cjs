@@ -48,35 +48,14 @@ module.exports = class Task extends BaseModel {
     const dict = {
       name: (name) => name,
       description: (description) => description,
-      status: (status) => Number(status),
       statusId: (status) => Number(status),
-      creator: (creator) => Number(creator),
       creatorId: (creator) => Number(creator),
-      executor: (executor) => {
-        if (Number(executor) === 0) return null;
-        return Number(executor);
-      },
-      executorId: (executor) => {
-        if (Number(executor) === 0) return null;
-        return Number(executor);
-      },
+      executorId: (executor) => Number(executor) || null,
       labels: (labels) => labels,
-    };
-    const getTaskAttributeFromName = {
-      name: () => 'name',
-      description: () => 'description',
-      status: () => 'statusId',
-      statusId: () => 'statusId',
-      creator: () => 'creatorId',
-      creatorId: () => 'creatorId',
-      executor: () => 'executorId',
-      executorId: () => 'executorId',
-      labels: () => 'labels',
-      label: () => 'labels',
     };
     const convertedJson = Object.entries(superJson)
       .reduce((acc, [key, value]) => (
-        { ...acc, [getTaskAttributeFromName[key]()]: dict[key](value) }), {});
+        { ...acc, [key]: dict[key](value) }), {});
     return convertedJson;
   }
 
