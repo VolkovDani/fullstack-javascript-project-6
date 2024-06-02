@@ -45,9 +45,9 @@ block content
             td
               a(href=routeTo('taskPage', { id: task.id }))
                 = task.name
-            td= task.statuses.name
-            td= `${task.creators.firstName} ${task.creators.lastName}`
-            td= task.executors ? `${task.executors.firstName} ${task.executors.lastName}` : null
+            td= task.status.name
+            td= `${task.creator.firstName} ${task.creator.lastName}`
+            td= task.executor ? `${task.executor.firstName} ${task.executor.lastName}` : null
             td= formatDate(task.createdAt)
             td
               .d-flex.flex-wrap
