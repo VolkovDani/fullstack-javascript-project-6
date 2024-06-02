@@ -26,16 +26,16 @@ module.exports = class Task extends BaseModel {
 
   static modifiers = {
     findCreator(query, creatorId) {
-      if (creatorId) query.where('creators.id', creatorId);
+      return query.skipUndefined().where('creators.id', creatorId);
     },
     findStatus(query, statusId) {
-      if (statusId) query.where('statuses.id', statusId);
+      return query.skipUndefined().where('statuses.id', statusId);
     },
     findExecutor(query, executorId) {
-      if (executorId) query.where('executors.id', executorId);
+      return query.skipUndefined().where('executors.id', executorId);
     },
     findLabels(query, labelsIds) {
-      if (labelsIds) query.where('labels.id', labelsIds);
+      return query.skipUndefined().where('labels.id', labelsIds);
     },
   };
 

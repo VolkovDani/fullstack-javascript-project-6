@@ -113,8 +113,7 @@ const registerPlugins = async (app) => {
   app.decorate('getFilteredTasks', async (req) => {
     const isCurrentUserTasks = () => {
       if (!_.isEmpty(req.query.isCreatorUser)) {
-        const currentUser = req.session.get('passport').id;
-        return currentUser;
+        return req.session.get('passport').id;
       }
       return null;
     };
