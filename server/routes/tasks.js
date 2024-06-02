@@ -120,14 +120,9 @@ export default (app) => {
         // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
         const task = new objectionModels.task();
         const { labels: labelIds, ...rest } = req.body.data;
-        const {
-          status: statusId,
-          executor: executorId,
-          ...restProps
-        } = rest;
         try {
           task.$set({
-            ...restProps, statusId, executorId, id: taskId,
+            ...rest, id: taskId,
           });
           await objectionModels.task.transaction(async (trx) => {
             await patchedTask.$query(trx).patch(rest);
