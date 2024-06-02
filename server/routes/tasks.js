@@ -74,19 +74,15 @@ export default (app) => {
         req.body.data.creatorId = req.session.get('passport').id;
         const task = new objectionModels.task();
         const { labels: labelsFromForm, ...rest } = req.body.data;
-        const convertedLabelIds = [];
-        if (!_.isEmpty(labelsFromForm)) {
-          [...labelsFromForm].forEach((item) => convertedLabelIds.push(Number(item)));
-        }
         try {
           task.$set(rest);
           const validTask = await objectionModels.task.fromJson(rest);
           await objectionModels.task.transaction(async (trx) => {
             const labels = [];
-            if (convertedLabelIds.length > 0) {
+            if (!_.isEmpty(labelsFromForm)) {
               await objectionModels.label
                 .query(trx)
-                .whereIn('id', [...convertedLabelIds])
+                .whereIn('id', labelsFromForm)
                 .then((items) => labels.push(...items));
             }
             const newTask = await objectionModels.task
@@ -101,8 +97,9 @@ export default (app) => {
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
           const [statuses, executors, labels] = await getListItems();
-
-          task.labels = await objectionModels.label.query().whereIn('id', convertedLabelIds);
+          if (!_.isEmpty(labelsFromForm)) {
+            task.labels = await objectionModels.label.query().whereIn('id', labelsFromForm);
+          }
           req.flash('error', i18next.t('flash.tasks.create.error'));
           reply.render('tasks/new', {
             task, executors, statuses, errors: data, labels,
