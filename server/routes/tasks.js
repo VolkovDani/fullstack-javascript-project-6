@@ -3,7 +3,6 @@ import i18next from 'i18next';
 import _ from 'lodash';
 
 export default (app) => {
-  const getStatusesForSelect = () => app.objection.models.status.query();
   const getUsersForSelect = () => app.objection.models.user
     .query()
     .then((data) => data.map(({ id, firstName, lastName }) => ({ id, name: `${firstName} ${lastName}` })));
@@ -15,7 +14,7 @@ export default (app) => {
       async (req, reply) => {
         const tasks = await app.getFilteredTasks(req);
         const [statuses, executors, labels] = await Promise.all([
-          getStatusesForSelect(),
+          app.objection.models.status.query(),
           getUsersForSelect(),
           app.objection.models.label.query(),
         ]);
@@ -30,7 +29,7 @@ export default (app) => {
       { name: 'newTask', preValidation: app.authenticate },
       async (req, reply) => {
         const task = new app.objection.models.task();
-        const statuses = await getStatusesForSelect();
+        const statuses = await app.objection.models.status.query();
         const users = await getUsersForSelect();
         const labels = await app.objection.models.label.query();
         reply.render('tasks/new', {
@@ -70,7 +69,7 @@ export default (app) => {
           .withGraphJoined('executors')
           .withGraphJoined('labels');
 
-        const statuses = await getStatusesForSelect();
+        const statuses = await app.objection.models.status.query();
         const users = await getUsersForSelect();
         const labels = await app.objection.models.label
           .query();
@@ -113,7 +112,7 @@ export default (app) => {
           req.flash('info', i18next.t('flash.tasks.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
-          const statuses = await getStatusesForSelect();
+          const statuses = await app.objection.models.status.query();
           const users = await getUsersForSelect();
           const labelsSelect = await app.objection.models.label.query();
           task.labels = await app.objection.models.label.query().whereIn('id', convertedLabelIds);
@@ -135,7 +134,7 @@ export default (app) => {
           .withGraphJoined('labels')
           .findById(taskId);
         // if (!Object.hasOwn(req.body.data, 'labels')) req.body.data.labels = [];
-        const statuses = await getStatusesForSelect();
+        const statuses = await app.objection.models.status.query();
         const users = await getUsersForSelect();
         const labels = await app.objection.models.label.query();
         // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
