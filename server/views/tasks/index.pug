@@ -24,6 +24,7 @@ block content
             id="data_isCreatorUser"
             type="checkbox"
             name="isCreatorUser"
+            checked= selected.isCreatorUser
           )
           label.form-check-label(for="data_isCreatorUser")= t('views.tasks.actionButtons.checkMyTasks')
         +submit()(value=t('views.tasks.actionButtons.filter'))
