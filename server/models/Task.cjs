@@ -46,6 +46,7 @@ module.exports = class Task extends BaseModel {
   $parseJson(json, opt) {
     const superJson = super.$parseJson(json, opt);
     const dict = {
+      id: (id) => Number(id),
       name: (name) => name,
       description: (description) => description,
       statusId: (status) => Number(status),

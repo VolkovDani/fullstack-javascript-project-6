@@ -91,7 +91,6 @@ export default (app) => {
               .upsertGraphAndFetch({
                 ...validTask, labels,
               }, { relate: true, unrelate: true, noUpdate: ['labels'] });
-
             return newTask;
           });
           req.flash('info', i18next.t('flash.tasks.create.success'));
@@ -100,7 +99,6 @@ export default (app) => {
           const [statuses, executors, labels] = await getListItems();
           if (!_.isEmpty(labelsFromForm)) {
             const arrLabelIds = [...labelsFromForm].map(Number);
-
             task.labels = await objectionModels.label.query().whereIn('id', arrLabelIds);
           }
           req.flash('error', i18next.t('flash.tasks.create.error'));
@@ -116,75 +114,34 @@ export default (app) => {
       { name: 'patchTask', preValidation: app.authenticate },
       async (req, reply) => {
         const taskId = req.params.id;
-        const patchedTask = await objectionModels.task
-          .query()
-          .withGraphJoined('labels')
-          .findById(taskId);
-        // Создаю таск чтобы передать его обратно в форму в случае ошибок в форме
         const task = new objectionModels.task();
-        const { labels: labelIds, ...rest } = req.body.data;
+        const { labels: labelsFromForm, ...rest } = req.body.data;
         try {
           task.$set({
             ...rest, id: taskId,
           });
-          await objectionModels.task.transaction(async (trx) => {
-            await patchedTask.$query(trx).patch(rest);
-            if (!_.isEmpty(labelIds)) {
-              if (_.isArray(labelIds)) {
-                const convertedLabels = labelIds.map((item) => Number(item));
-                await objectionModels.labelsForTasks
-                  .query(trx)
-                  .where({ taskId })
-                  .skipUndefined()
-                  .whereNotIn('labelId', convertedLabels)
-                  .delete();
-
-                const arrPromises = [...labelIds].map((item) => {
-                  const obj = {
-                    labelId: Number(item),
-                    taskId: Number(taskId),
-                  };
-                  const labelsForTasksObj = new objectionModels.labelsForTasks();
-                  labelsForTasksObj.$set(obj);
-                  return objectionModels.labelsForTasks
-                    .query(trx)
-                    .insert(labelsForTasksObj);
-                });
-                await Promise.all(arrPromises);
-              } else {
-                await objectionModels.labelsForTasks
-                  .query(trx)
-                  .where({ taskId })
-                  .skipUndefined()
-                  .whereNot('labelId', Number(labelIds))
-                  .delete();
-
-                await objectionModels.labelsForTasks
-                  .query(trx)
-                  .where({ taskId })
-                  .skipUndefined()
-                  .delete();
-
-                const obj = {
-                  labelId: Number(labelIds),
-                  taskId: Number(taskId),
-                };
-                const labelsForTasksObj = new objectionModels.labelsForTasks();
-                labelsForTasksObj.$set(obj);
-                await objectionModels.labelsForTasks
-                  .query(trx)
-                  .insert(labelsForTasksObj);
-              }
-            } else {
-              await objectionModels.labelsForTasks
+          await objectionModels.task.transaction((async (trx) => {
+            const labels = [];
+            if (!_.isEmpty(labelsFromForm)) {
+              const arrLabelIds = [...labelsFromForm].map(Number);
+              await objectionModels.label
                 .query(trx)
-                .where({ taskId })
-                .delete();
+                .whereIn('id', arrLabelIds)
+                .then((items) => labels.push(...items));
             }
-          });
+            await objectionModels.task.query(trx)
+              .upsertGraphAndFetch({
+                labels, ...rest, id: taskId,
+              }, { relate: true, unrelate: true, noUpdate: ['labels'] });
+          }));
           req.flash('info', i18next.t('flash.tasks.patch.success'));
           reply.redirect(app.reverse('tasks'));
         } catch ({ data }) {
+          if (!_.isEmpty(labelsFromForm)) {
+            const arrLabelIds = [...labelsFromForm].map(Number);
+            task.labels = await objectionModels.label.query().whereIn('id', arrLabelIds);
+          }
+
           reply.statusCode = 422;
           req.flash('error', i18next.t('flash.tasks.patch.error'));
           const [statuses, executors, labels] = await getListItems();
