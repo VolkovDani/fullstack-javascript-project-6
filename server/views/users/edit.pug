@@ -5,9 +5,9 @@ block header
 
 block content
   +formFor(user)(action=routeTo('patchUser', { id: Number(user.id) }) method='post')
-    +input(user, 'firstName', errors)(type="text" value=user.firstName)
-    +input(user, 'lastName', errors)(type="text" value=user.lastName)
-    +input(user, 'email', errors)(type="text" value=user.email)
-    +input(user, 'password', errors)(type="password")
+    +input(user, 'firstName', errors)(type="text" value=user.firstName maxlength='100')
+    +input(user, 'lastName', errors)(type="text" value=user.lastName maxlength='100')
+    +input(user, 'email', errors)(type="text" value=user.email maxlength='100')
+    +input(user, 'password', errors)(type="password" maxlength='100')
     input(name="_method" value='patch' type='hidden')
     +submit(user)(value=t('views.users.edit.actionButtons.submit'))

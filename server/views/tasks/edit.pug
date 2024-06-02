@@ -5,7 +5,7 @@ block header
 
 block content
   form(action=routeTo('patchTask', { id: Number(task.id)}) method="post")
-    +input(task, 'name', errors)
+    +input(task, 'name', errors)(maxlength='100')
     +inputTextarea(task, 'description', errors)
     +inputSelect(statuses, 'statusId', errors, task)
     +inputSelect(users, 'executorId', errors, task)
