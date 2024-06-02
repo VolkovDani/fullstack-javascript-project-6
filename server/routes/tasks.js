@@ -1,6 +1,5 @@
 // @ts-check
 import i18next from 'i18next';
-import _ from 'lodash';
 
 export default (app) => {
   const objectionModels = app.objection.models;
