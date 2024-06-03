@@ -7,7 +7,6 @@ block content
   a.btn.btn-warning.mb-5(href=route('newTask') type="button")= t('views.tasks.actionButtons.create')
   .card.shadow-sm
     .card-body.p-4
-      +formFor()
       form(action=route('tasks') method='get')
         .row
           .col-12.col-md
