@@ -160,7 +160,7 @@ export default (app) => {
               .where({ taskId });
           });
           req.flash('info', i18next.t('flash.tasks.delete.success'));
-          reply.redirect(`${app.reverse('tasks')}?${queryParams}`);
+          reply.redirect(`${app.reverse('tasks')}${queryParams ? `?${queryParams}` : ''}`);
         } catch ({ data }) {
           req.flash('error', i18next.t('flash.tasks.delete.error'));
         }
