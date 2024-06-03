@@ -11,19 +11,19 @@ block content
         .row
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(statuses, 'status', selected)
+              +inputSelectFilter(statuses, 'status', filterOptions)
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(executors, 'executor', selected)
+              +inputSelectFilter(executors, 'executor', filterOptions)
           .col-12.col-md
             .input-group.mb-3
-              +inputSelectFilter(labels, 'label', selected)
+              +inputSelectFilter(labels, 'label', filterOptions)
         .mb-3.form-switch
           input.form-check-input(
             id="data_isCreatorUser"
             type="checkbox"
             name="isCreatorUser"
-            checked= selected.isCreatorUser
+            checked= filterOptions.isCreatorUser
           )
           label.form-check-label(for="data_isCreatorUser")= t('views.tasks.actionButtons.checkMyTasks')
         +submit()(value=t('views.tasks.actionButtons.filter'))
@@ -52,4 +52,9 @@ block content
             td
               .d-flex.flex-wrap
                 a(href=routeTo('editTask', { id: task.id }) class="btn btn-warning me-1" type="button")= t('views.tasks.actionButtons.edit')
-                +buttonTo(routeTo('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('views.tasks.actionButtons.delete'))
+                +buttonTo(
+                  `${routeTo('deleteTask', { id: task.id })}${queryObjToStr(filterOptions)}`,
+                  'delete')(
+                    class="btn btn-danger"
+                    value=t('views.tasks.actionButtons.delete')
+                    )

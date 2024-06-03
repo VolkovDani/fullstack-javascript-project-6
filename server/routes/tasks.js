@@ -20,7 +20,7 @@ export default (app) => {
         const tasks = await app.getFilteredTasks(req);
         const [statuses, executors, labels] = await getListItems();
         reply.render('tasks/index', {
-          tasks, statuses, executors, labels, selected: { ...req.query },
+          tasks, statuses, executors, labels, filterOptions: { ...req.query },
         });
         return reply;
       },
@@ -138,7 +138,7 @@ export default (app) => {
       '/tasks/:id',
       { name: 'deleteTask', preValidation: app.authenticate },
       async (req, reply) => {
-        const taskId = req.params.id;
+        const [taskId, queryParams] = req.params.id.split(';');
         const userId = Number(req.session.get('passport').id);
         const task = await objectionModels.task
           .query()
@@ -160,7 +160,7 @@ export default (app) => {
               .where({ taskId });
           });
           req.flash('info', i18next.t('flash.tasks.delete.success'));
-          reply.redirect(app.reverse('tasks'));
+          reply.redirect(`${app.reverse('tasks')}?${queryParams}`);
         } catch ({ data }) {
           req.flash('error', i18next.t('flash.tasks.delete.error'));
         }

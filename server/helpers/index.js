@@ -40,4 +40,10 @@ export default (app) => ({
     };
     return dict[property];
   },
+  queryObjToStr(queryObj) {
+    let str = ';';
+    Object.entries(queryObj).forEach(([key, value]) => { str += `${key}=${value || ''}&`; });
+
+    return str.slice(0, -1);
+  },
 });
